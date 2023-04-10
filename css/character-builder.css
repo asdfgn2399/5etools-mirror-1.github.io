@@ -1,0 +1,54 @@
+#info-container {
+	width: 900px;
+	margin: 0 auto;
+}
+
+.char-sheet {
+	font-size: 80%;
+	text-align: center !important;
+}
+
+.char-sheet-btns {
+	width: 900px;
+	margin: 0 auto;
+}
+
+.char-sheet-row {
+	height: 75px;
+}
+
+.col-width {
+	width: 75px;
+	padding: 0;
+}
+
+.char-sheet-cell {
+	padding: 0;
+}
+
+.name-plate {
+	text-align: left;
+	padding: 25px;
+}
+
+table, td {
+	border: 1px solid red;
+}
+
+.statgen-viewport-edited {
+	position: unset;
+	top: unset;
+	right: unset;
+	bottom: unset;
+	left: unset;
+	width: unset;
+}
+
+.container-char-builder {
+	all: unset;
+}
+
+.btn-underline {
+	margin: 0;
+	border: 1px solid rgb(150, 150, 150);
+}
