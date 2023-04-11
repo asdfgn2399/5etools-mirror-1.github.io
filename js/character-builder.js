@@ -49,7 +49,8 @@ var CharacterSheet = {
 				return valueOfCookie
 			}
 		}
-		return "";
+
+		return JSON.stringify(CharacterSheet.currentData);
 	},
 	update: {
 		all: () => {
@@ -85,8 +86,9 @@ var CharacterSheet = {
 			}
 		},
 		name: () => {
+			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
 			var charName = CharacterSheet.currentData.name // TODO: Get input from details tab
-			var charRace = CharacterSheet.currentData.race
+			var charRace = AllData.raceData.race[selectedRaceIndex].name
 			// Gets selected race's index in race Data // var charIndex = $('.race-select').children('option:selected').prop('index')
 			var charClass = CharacterSheet.currentData.class // TODO: Get input from class tab
 	
@@ -95,7 +97,6 @@ var CharacterSheet = {
 		proficencies: () => {
 			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
 			var languageProficienciesData = '';
-			console.log(AllData.raceData.race[selectedRaceIndex])
 			languageProficienciesData = AllData.raceData.race[selectedRaceIndex].languageProficiencies
 			var languageProficiencies = []
 			if (AllData.raceData.race[selectedRaceIndex].lineage == "VRGR") {
@@ -323,7 +324,8 @@ async function Run() {
 		}
 	}
 
-	CharacterSheet.currentData = JSON.parse(CharacterSheet.loadDataFromCookie())
+	var StringJSON = CharacterSheet.loadDataFromCookie()
+	CharacterSheet.currentData = JSON.parse(StringJSON)
 	Run.tabBtnSetup()
 	Run.setupCharBuilder();
 }
