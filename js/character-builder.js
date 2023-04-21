@@ -14,31 +14,47 @@ async function getJSONData(source) {
 	return data
 }
 
-function toTitleCase(str) {
-	return str.replace(
-    /\w\S*/g,
-    txt => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase()
-  );
-}
-
 var AllData = {}
 
 var CharacterSheet = {
 	currentData: {
 		"name": "Name",
 		"abilArray": [10, 10, 10, 10, 10, 10],
-		"race": "Race",
-		"raceSource":"PHB",
-		"speed": 30,
+		"raceData": {
+			"name": "Race",
+			"source": "PHB",
+			"page": 0,
+			"size": [
+				"M"
+			],
+			"speed": 0,
+			"languageProficiencies": [
+				{
+					"commom": true
+				}
+			],
+			"entries": [
+				""
+			]
+		},
 		"class": "Class"
 	},
 	saveDataToCookie: () => {
+		//Minify race
+		var race = CharacterSheet.currentData.raceData
+		CharacterSheet.currentData.raceSource = race.source
+		CharacterSheet.currentData.raceName = race.name
+		CharacterSheet.currentData.raceData = undefined;
+
+		//Save Cookie
 		document.cookie = 'sheetData=' + JSON.stringify(CharacterSheet.currentData);
 	},
 	loadDataFromCookie: () => {
+		//Load Cookie
 		let name = "sheetData=";
 		let decodedCookie = decodeURIComponent(document.cookie);
 		let ca = decodedCookie.split(';');
+		var value = CharacterSheet.currentData;
 		for(let i = 0; i <ca.length; i++) {
 			let c = ca[i];
 			while (c.charAt(0) == ' ') {
@@ -46,14 +62,38 @@ var CharacterSheet = {
 			}
 			var valueOfCookie = c.substring(name.length, c.length);
 			if (c.indexOf(name) == 0 && valueOfCookie !== '') {
-				return valueOfCookie
+				value = JSON.parse(valueOfCookie)
 			}
 		}
 
-		return JSON.stringify(CharacterSheet.currentData);
+		// Expand RaceData
+		console.log(AllData.raceData.race[45])
+		var foundRace = false
+		for (let i = 0; i < AllData.raceData.race.length; i++) {
+			var race = AllData.raceData.race[i]
+			if (race.name == value.raceName && race.source == value.raceSource) {
+				value.raceData = race
+				foundRace = true
+				console.log('Found Race!')
+				break;
+			}
+		}
+		// console.log(value)
+
+		if (!foundRace) {
+			value.raceData = CharacterSheet.currentData.raceData
+		}
+		// console.log(value)
+
+		value.raceName = undefined
+		value.raceSource = undefined
+
+		//Return value
+		return value
 	},
 	update: {
 		all: () => {
+			console.log('Updated Character Sheet!')
 			var c = CharacterSheet.update
 				c.abilityScores()
 				c.name()
@@ -86,25 +126,22 @@ var CharacterSheet = {
 			}
 		},
 		name: () => {
-			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
 			var charName = CharacterSheet.currentData.name // TODO: Get input from details tab
-			var charRace = AllData.raceData.race[selectedRaceIndex].name
-			// Gets selected race's index in race Data // var charIndex = $('.race-select').children('option:selected').prop('index')
+			var charRace = CharacterSheet.currentData.raceData.name
 			var charClass = CharacterSheet.currentData.class // TODO: Get input from class tab
 	
 			$('.name-plate').text(`${charName} (${charRace} ${charClass})`)
 		},
 		proficencies: () => {
-			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
 			var languageProficienciesData = '';
-			languageProficienciesData = AllData.raceData.race[selectedRaceIndex].languageProficiencies
+			languageProficienciesData = CharacterSheet.currentData.raceData.languageProficiencies
 			var languageProficiencies = []
-			if (AllData.raceData.race[selectedRaceIndex].lineage == "VRGR") {
-				languageProficiencies.push(toTitleCase('common'), toTitleCase('other'))
+			if (CharacterSheet.currentData.raceData.lineage == "VRGR") {
+				languageProficiencies.push('Common', 'Other')
 			} else {
 				for (var i = 0; i < languageProficienciesData.length; i++) {
 					for (const [key, val] of Object.entries(languageProficienciesData[i])) {
-						if (val == true) languageProficiencies.push(toTitleCase(key))
+						if (val == true) languageProficiencies.push(key.toTitleCase())
 					}
 				}
 			}
@@ -113,15 +150,11 @@ var CharacterSheet = {
 <p>${languageProficiencies.join(', ')}`)
 		},
 		speed: () => {
-			// Get race index
-			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
-
-			var speedData = AllData.raceData.race[selectedRaceIndex].speed;
-			var speed = CharacterSheet.currentData.speed
+			var speedData = CharacterSheet.currentData.raceData.speed;
 			if (typeof(speedData) == 'object') {
-				speed = speedData.walk
+				var speed = speedData.walk
 			} else {
-				speed = speedData
+				var speed = speedData
 			}
 
 			$('.speed-cell').text(`${speed} feet`)
@@ -202,6 +235,9 @@ function showActiveTab(tabs, index) {
 	}
 
 	tabs[index].classList.remove('hide')
+	if (index = charSheetTabIndex) {
+		CharacterSheet.update.all()
+	}
 }
 
 var Races = {
@@ -213,7 +249,8 @@ var Races = {
 		
 		for (var i = 0; i < AllData.raceData.race.length; i++) {
 			var currentRace = AllData.raceData.race[i]
-			if (currentRace.name == CharacterSheet.currentData.race && currentRace.source == CharacterSheet.currentData.raceSource) {
+			// console.log(CharacterSheet.currentData)
+			if (currentRace.name == CharacterSheet.currentData.raceData.name && currentRace.source == CharacterSheet.currentData.raceData.source) {
 				var selected = ` selected="true"`
 			} else {
 				var selected = ''
@@ -237,8 +274,8 @@ var Races = {
 			s.race()
 		},
 		race: () => {
-			CharacterSheet.currentData.race = $('.race-select').val().replace(/ \[.*\]/, '')
-			CharacterSheet.currentData.raceSource = $('.race-select').val().replace(/.*\[(.*)\]/, '$1')
+			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
+			CharacterSheet.currentData.raceData = AllData.raceData.race[selectedRaceIndex]
 		}
 	}
 }
@@ -303,14 +340,6 @@ async function Run() {
 			setupEquipment(),
 			CharacterSheet.setup()
 		},
-		updateCharBuilder: [
-			() => Races.save.all(),
-			() => {},
-			() => Statgen.save.all(),
-			() => {},
-			() => {},
-			() => CharacterSheet.update.all()
-		],
 		tabBtnSetup: () => {
 			var tabBtns = document.querySelectorAll('.char-builder-tab-btn')
 			var tabs = document.querySelectorAll('.char-builder-tab')
@@ -318,14 +347,13 @@ async function Run() {
 			for (let i = 0; i < tabBtns.length; i++) {	
 				tabBtns[i].addEventListener('click', () => {
 					showActiveTab(tabs, i)
-					Run.updateCharBuilder[i]();
 				})
 			}
 		}
 	}
 
-	var StringJSON = CharacterSheet.loadDataFromCookie()
-	CharacterSheet.currentData = JSON.parse(StringJSON)
+	CharacterSheet.currentData = CharacterSheet.loadDataFromCookie()
+	console.log(CharacterSheet.currentData)
 	Run.tabBtnSetup()
 	Run.setupCharBuilder();
 }
