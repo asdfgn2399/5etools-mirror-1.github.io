@@ -19,7 +19,7 @@ var AllData = {}
 var CharacterSheet = {
 	currentData: {
 		"name": "Name",
-		"abilArray": [10, 10, 10, 10, 10, 10],
+		"abilArray": [{"total": "10", "mod": "0"}, {"total": "10", "mod": "0"}, {"total": "10", "mod": "0"}, {"total": "10", "mod": "0"}, {"total": "10", "mod": "0"}, {"total": "10", "mod": "0"}],
 		"raceData": {
 			"name": "Race",
 			"source": "PHB",
@@ -94,6 +94,8 @@ var CharacterSheet = {
 	update: {
 		all: () => {
 			console.log('Updated Character Sheet!')
+			Statgen.save.all()
+			
 			var c = CharacterSheet.update
 				c.abilityScores()
 				c.name()
@@ -101,28 +103,30 @@ var CharacterSheet = {
 				c.speed()	
 		},
 		abilityScores: () => {
-			var abilObjectString = '['
-			// var abilNames = ['str', 'dex', 'con', 'int', 'wis', 'cha']
-			var inputTotals = CharacterSheet.currentData.abilArray;
+			// var abilObjectString = '['
+			var abilNames = ['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha']
+			// var inputTotals = CharacterSheet.currentData.abilArray;
 		
-			for (var i = 0; i < inputTotals.length; i++) {
-				abilObjectString += inputTotals[i]
-				if (i == charSheetTabIndex) {
-					break;
-				}
+			// for (var i = 0; i < inputTotals.length; i++) {
+			// 	abilObjectString += inputTotals[i].total
+			// 	if (i == 5) {
+			// 		break;
+			// 	}
 				
-				if (i !== inputTotals.length - 1) {
-					abilObjectString += ','
-				}
-			}
+			// 	if (i !== inputTotals.length - 1) {
+			// 		abilObjectString += ','
+			// 	}
+			// }
 		
-			abilObjectString += ']'
-			var abilArray = JSON.parse(abilObjectString);
+			// abilObjectString += ']'
+			var abilArray = CharacterSheet.currentData.abilArray;
+			console.log(`Check charsheet side:`)
+			console.log(CharacterSheet.currentData.abilArray)
 			var abilCells = ['.str-cell', '.dex-cell', '.con-cell', '.int-cell', '.wis-cell', '.cha-cell']
 		
 			for (var i = 0; i < abilCells.length; i++) {
 				if (abilArray[i] == 0) abilArray[i] = "\u2014"
-				$(abilCells[i]).text(abilArray[i])
+				$(abilCells[i]).html(`${abilNames[i]}<br>${abilArray[i].total}<br>${abilArray[i].mod}`)
 			}
 		},
 		name: () => {
@@ -151,13 +155,22 @@ var CharacterSheet = {
 		},
 		speed: () => {
 			var speedData = CharacterSheet.currentData.raceData.speed;
-			if (typeof(speedData) == 'object') {
-				var speed = speedData.walk
+			var isObject = typeof(speedData) == 'object';
+			var speed = ''
+			if (isObject) {
+				speed += `${speedData.walk} feet`
+				if (speedData.fly !== undefined) {
+					if (speedData.fly == true) {
+						speed += `<br>Fly ${speedData.walk} feet`
+					} else if (typeof(speedData.fly) == 'number') {
+						speed += `<br>Fly ${speedData.fly} feet`
+					}
+				}
 			} else {
-				var speed = speedData
+				speed += `${speedData} feet`
 			}
 
-			$('.speed-cell').text(`${speed} feet`)
+			$('.speed-cell').html(speed)
 		}
 	},
 	setup: function () {
@@ -235,9 +248,6 @@ function showActiveTab(tabs, index) {
 	}
 
 	tabs[index].classList.remove('hide')
-	if (index = charSheetTabIndex) {
-		CharacterSheet.update.all()
-	}
 }
 
 var Races = {
@@ -285,7 +295,7 @@ var Statgen = {
 		console.log('Statgen function run!')
 		
 		// Atatch saving functions to oninput events
-		$('body').on('input', '.form-control.input-xs.form-control--minimal.statgen-shared__ipt.statgen-shared__ipt--sel', () => {
+		$('body').on('change', '.form-control.input-xs.form-control--minimal.statgen-shared__ipt', () => {
 			Statgen.save.all();
 		})
 	},
@@ -295,29 +305,41 @@ var Statgen = {
 			s.abilArray()
 		},
 		abilArray: () => {
-			console.log('Check!')
-			var abilObjectString = '['
+			console.log('Run abilarray Function!')
+			// var abilObjectString = '['
 			var inputTotals = $('.form-control.form-control--minimal.statgen-shared__ipt.text-center')
-			for (var i = 0; i < inputTotals.length; i++) {
-				abilObjectString += inputTotals[i].value
-				if (i == 5) {
-					break;
-				}
+			// for (var i = 0; i < inputTotals.length; i++) {
+			// 	abilObjectString += inputTotals[i].value
+			// 	if (i == 5) {
+			// 		break;
+			// 	}
 				
-				if (i !== inputTotals.length - 1) {
-					abilObjectString += ','
-				}
-			}
+			// 	if (i !== inputTotals.length - 1) {
+			// 		abilObjectString += ','
+			// 	}
+			// }
 		
-			abilObjectString += ']'
-			CharacterSheet.currentData.abilArray = JSON.parse(abilObjectString);
-			console.log(abilObjectString)
+			// abilObjectString += ']'
+			// CharacterSheet.currentData.abilArray = JSON.parse(abilObjectString);
+			// console.log(abilObjectString)
+
+			for (let i = 0; i < inputTotals.length / 2; i++) {
+				CharacterSheet.currentData.abilArray.push({"total": inputTotals[i].value, "mod": inputTotals[i + 6].value})
+				if (CharacterSheet.currentData.abilArray.length > 6) CharacterSheet.currentData.abilArray.splice(0, 1)
+			}
 		}
 	}
 }
 
-function setupClasses() {
-	console.log('Classes function run!')
+var Classes = {
+	setupClasses: () => {
+		console.log('Classes function run!')
+	},
+	save: {
+		all: () => {
+
+		}
+	}
 }
 
 function setupDescription() {
@@ -334,12 +356,20 @@ async function Run() {
 	var Run = {
 		setupCharBuilder: () => {
 			Races.setupRaces(),
-			setupClasses(),
+			Classes.setupClasses(),
 			Statgen.setup(),
 			setupDescription(),
 			setupEquipment(),
 			CharacterSheet.setup()
 		},
+		updateCharSheet: [
+			() => Races.save.all(),
+			() => {},
+			() => Statgen.save.all(),
+			() => {},
+			() => {},
+			() => CharacterSheet.update.all(),
+		],
 		tabBtnSetup: () => {
 			var tabBtns = document.querySelectorAll('.char-builder-tab-btn')
 			var tabs = document.querySelectorAll('.char-builder-tab')
@@ -347,6 +377,7 @@ async function Run() {
 			for (let i = 0; i < tabBtns.length; i++) {	
 				tabBtns[i].addEventListener('click', () => {
 					showActiveTab(tabs, i)
+					Run.updateCharSheet[i]();
 				})
 			}
 		}
