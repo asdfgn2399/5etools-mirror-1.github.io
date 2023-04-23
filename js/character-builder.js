@@ -44,7 +44,7 @@ var CharacterSheet = {
 		var race = CharacterSheet.currentData.raceData
 		CharacterSheet.currentData.raceSource = race.source
 		CharacterSheet.currentData.raceName = race.name
-		CharacterSheet.currentData.raceData = undefined;
+		delete CharacterSheet.currentData.raceData
 
 		//Save Cookie
 		document.cookie = 'sheetData=' + JSON.stringify(CharacterSheet.currentData);
@@ -67,14 +67,12 @@ var CharacterSheet = {
 		}
 
 		// Expand RaceData
-		console.log(AllData.raceData.race[45])
 		var foundRace = false
-		for (let i = 0; i < AllData.raceData.race.length; i++) {
-			var race = AllData.raceData.race[i]
+		for (let i = 0; i < AllData.raceData.length; i++) {
+			var race = AllData.raceData[i]
 			if (race.name == value.raceName && race.source == value.raceSource) {
 				value.raceData = race
 				foundRace = true
-				console.log('Found Race!')
 				break;
 			}
 		}
@@ -85,8 +83,8 @@ var CharacterSheet = {
 		}
 		// console.log(value)
 
-		value.raceName = undefined
-		value.raceSource = undefined
+		delete value.raceName
+		delete value.raceSource
 
 		//Return value
 		return value
@@ -103,25 +101,8 @@ var CharacterSheet = {
 				c.speed()	
 		},
 		abilityScores: () => {
-			// var abilObjectString = '['
 			var abilNames = ['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha']
-			// var inputTotals = CharacterSheet.currentData.abilArray;
-		
-			// for (var i = 0; i < inputTotals.length; i++) {
-			// 	abilObjectString += inputTotals[i].total
-			// 	if (i == 5) {
-			// 		break;
-			// 	}
-				
-			// 	if (i !== inputTotals.length - 1) {
-			// 		abilObjectString += ','
-			// 	}
-			// }
-		
-			// abilObjectString += ']'
 			var abilArray = CharacterSheet.currentData.abilArray;
-			console.log(`Check charsheet side:`)
-			console.log(CharacterSheet.currentData.abilArray)
 			var abilCells = ['.str-cell', '.dex-cell', '.con-cell', '.int-cell', '.wis-cell', '.cha-cell']
 		
 			for (var i = 0; i < abilCells.length; i++) {
@@ -257,8 +238,8 @@ var Races = {
 		// Setup race selection
 		var raceHTML = `<select name="raceSelect" class="race-select race-tab-choice">`
 		
-		for (var i = 0; i < AllData.raceData.race.length; i++) {
-			var currentRace = AllData.raceData.race[i]
+		for (var i = 0; i < AllData.raceData.length; i++) {
+			var currentRace = AllData.raceData[i]
 			// console.log(CharacterSheet.currentData)
 			if (currentRace.name == CharacterSheet.currentData.raceData.name && currentRace.source == CharacterSheet.currentData.raceData.source) {
 				var selected = ` selected="true"`
@@ -285,7 +266,7 @@ var Races = {
 		},
 		race: () => {
 			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
-			CharacterSheet.currentData.raceData = AllData.raceData.race[selectedRaceIndex]
+			CharacterSheet.currentData.raceData = AllData.raceData[selectedRaceIndex]
 		}
 	}
 }
@@ -305,24 +286,8 @@ var Statgen = {
 			s.abilArray()
 		},
 		abilArray: () => {
-			console.log('Run abilarray Function!')
-			// var abilObjectString = '['
+			// console.log('Run abilarray Function!')
 			var inputTotals = $('.form-control.form-control--minimal.statgen-shared__ipt.text-center')
-			// for (var i = 0; i < inputTotals.length; i++) {
-			// 	abilObjectString += inputTotals[i].value
-			// 	if (i == 5) {
-			// 		break;
-			// 	}
-				
-			// 	if (i !== inputTotals.length - 1) {
-			// 		abilObjectString += ','
-			// 	}
-			// }
-		
-			// abilObjectString += ']'
-			// CharacterSheet.currentData.abilArray = JSON.parse(abilObjectString);
-			// console.log(abilObjectString)
-
 			for (let i = 0; i < inputTotals.length / 2; i++) {
 				CharacterSheet.currentData.abilArray.push({"total": inputTotals[i].value, "mod": inputTotals[i + 6].value})
 				if (CharacterSheet.currentData.abilArray.length > 6) CharacterSheet.currentData.abilArray.splice(0, 1)
@@ -350,8 +315,66 @@ function setupEquipment() {
 	console.log('Equipment function run!')
 }
 
+var _pLoadRaces = async () => {
+	return [
+		...(await DataUtil.race.loadJSON()).race,
+		...((await DataUtil.race.loadPrerelease({isAddBaseRaces: false})).race || []),
+		...((await DataUtil.race.loadBrew({isAddBaseRaces: false})).race || []),
+	]
+		.filter(it => {
+			const hash = UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_RACES](it);
+			return !ExcludeUtil.isExcluded(hash, "race", it.source);
+		});
+}
+
+var _pLoadClasses = async () => { //TODO: Figure out how??
+	
+}
+
+var _pLoadBackgrounds = async () => {
+	return [
+		...(await DataUtil.loadJSON("data/backgrounds.json")).background,
+		...((await PrereleaseUtil.pGetBrewProcessed()).background || []),
+		...((await BrewUtil2.pGetBrewProcessed()).background || []),
+	]
+		.filter(it => {
+			const hash = UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_BACKGROUNDS](it);
+			return !ExcludeUtil.isExcluded(hash, "background", it.source);
+		});
+}
+
+var _pLoadFeats = async () => {
+	return [
+		...(await DataUtil.loadJSON("data/feats.json")).feat,
+		...((await PrereleaseUtil.pGetBrewProcessed()).feat || []),
+		...((await BrewUtil2.pGetBrewProcessed()).feat || []),
+	]
+		.filter(it => {
+			const hash = UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_FEATS](it);
+			return !ExcludeUtil.isExcluded(hash, "feat", it.source);
+		});
+}
+
 async function Run() {
-	AllData.raceData = await getJSONData('races')
+	// AllData.raceData = await getJSONData('races')
+	await Promise.all([
+		PrereleaseUtil.pInit(),
+		BrewUtil2.pInit(),
+	]);
+	await ExcludeUtil.pInitialise();
+	const [races, classes, backgrounds, feats] = await Promise.all([
+		await _pLoadRaces(),
+		await _pLoadClasses(),
+		await _pLoadBackgrounds(),
+		await _pLoadFeats(),
+	]);
+
+	AllData.raceData = races
+	AllData.classData = classes
+	AllData.backgroundData = backgrounds
+	AllData.featData = feats
+
+	// console.log(AllData)
 	
 	var Run = {
 		setupCharBuilder: () => {
@@ -384,7 +407,7 @@ async function Run() {
 	}
 
 	CharacterSheet.currentData = CharacterSheet.loadDataFromCookie()
-	console.log(CharacterSheet.currentData)
+	// console.log(CharacterSheet.currentData)
 	Run.tabBtnSetup()
 	Run.setupCharBuilder();
 }
