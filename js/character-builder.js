@@ -39,6 +39,7 @@ var CharacterSheet = {
 		},
 		"class": "Class"
 	},
+	// TODO: Use 5etools cookie method
 	saveDataToCookie: () => {
 		//Minify race
 		var race = CharacterSheet.currentData.raceData

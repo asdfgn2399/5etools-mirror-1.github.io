@@ -994,7 +994,7 @@ class StatGenUi extends BaseComponent {
 
 			const {$hrPreview} = this._getHrPreviewMeta();
 
-			const $stgSel = $$`<div class="ve-flex-col mt-3 hide">
+			const $stgSel = $$`<div class="ve-flex-col mt-3">
 				<div class="mb-1">Select a ${this._title}</div>
 				<div class="ve-flex-v-center mb-2">
 					<div class="ve-flex-v-center btn-group w-100 mr-2">${$btnFilterForEntity}${$selEntity}</div>
@@ -1003,6 +1003,10 @@ class StatGenUi extends BaseComponent {
 				${$stgAbilityScoreSet}
 			</div>`;
 
+			console.log(this._propIxEntity)
+			console.log(this._parent)
+			console.log(this._propIsPreview)
+			console.log(this._title)
 			return {
 				$wrpOuter,
 

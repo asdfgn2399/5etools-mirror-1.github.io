@@ -31,7 +31,7 @@
 	padding: 25px;
 }
 
-table, td {
+.char-sheet, .char-sheet td {
 	border: 1px solid red;
 }
 
