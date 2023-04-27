@@ -1003,10 +1003,10 @@ class StatGenUi extends BaseComponent {
 				${$stgAbilityScoreSet}
 			</div>`;
 
-			console.log(this._propIxEntity)
-			console.log(this._parent)
-			console.log(this._propIsPreview)
-			console.log(this._title)
+			// console.log(this._propIxEntity)
+			// console.log(this._parent)
+			// console.log(this._propIsPreview)
+			// console.log(this._title)
 			return {
 				$wrpOuter,
 

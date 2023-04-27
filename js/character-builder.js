@@ -247,7 +247,7 @@ var Races = {
 			} else {
 				var selected = ''
 			}
-			var newRaceOption = `<option index="${i}"${selected}>${currentRace.name} [${currentRace.source}]</option>
+			var newRaceOption = `<option${selected}>${currentRace.name} [${currentRace.source}]</option>
 			`;
 			raceHTML += newRaceOption
 		}
@@ -266,8 +266,10 @@ var Races = {
 			s.race()
 		},
 		race: () => {
-			var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
-			CharacterSheet.currentData.raceData = AllData.raceData[selectedRaceIndex]
+			// var selectedRaceIndex = $('.race-select').children('option:selected').prop('index');
+			// CharacterSheet.currentData.raceData = AllData.raceData[selectedRaceIndex]
+			
+			CharacterSheet.currentData.raceData = AllData.raceData[$('.race-select').prop("selectedIndex")]
 		}
 	}
 }
@@ -328,8 +330,20 @@ var _pLoadRaces = async () => {
 		});
 }
 
-var _pLoadClasses = async () => { //TODO: Figure out how??
-	
+var _pLoadClasses = async () => {
+	return [
+		...(await DataUtil.class.loadJSON()).class,
+		...((await DataUtil.class.loadPrerelease()).class || []),
+		...((await DataUtil.class.loadBrew()).class || [])
+	]
+}
+
+var _pLoadSubclasses = async () => {
+	return [
+		...(await DataUtil.class.loadJSON()).subclass,
+		...((await DataUtil.class.loadPrerelease()).subclass || []),
+		...((await DataUtil.class.loadBrew()).subclass || [])
+	]
 }
 
 var _pLoadBackgrounds = async () => {
@@ -363,19 +377,21 @@ async function Run() {
 		BrewUtil2.pInit(),
 	]);
 	await ExcludeUtil.pInitialise();
-	const [races, classes, backgrounds, feats] = await Promise.all([
+	const [races, classes, subclasses, backgrounds, feats] = await Promise.all([
 		await _pLoadRaces(),
 		await _pLoadClasses(),
+		await _pLoadSubclasses(),
 		await _pLoadBackgrounds(),
 		await _pLoadFeats(),
 	]);
 
 	AllData.raceData = races
 	AllData.classData = classes
+	AllData.subclassData = subclasses
 	AllData.backgroundData = backgrounds
 	AllData.featData = feats
 
-	// console.log(AllData)
+	console.log(AllData)
 	
 	var Run = {
 		setupCharBuilder: () => {
