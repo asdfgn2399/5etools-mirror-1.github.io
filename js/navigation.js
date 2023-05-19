@@ -142,6 +142,16 @@ class NavBar {
 		this._addElement_button(
 			NavBar._CAT_SETTINGS,
 			{
+				html: "Sign in",
+				id: "signInButton",
+				// click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, isLoggedIn),
+				title: "Sign in to load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...)",
+			},
+		);
+		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
 				html: "Save State to File",
 				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt),
 				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to a file.",
@@ -554,6 +564,8 @@ class NavBar {
 		a.innerHTML = options.html;
 
 		if (options.context) a.oncontextmenu = options.context;
+
+		if (options.id && !document.getElementById(options.id)) a.id = options.id;
 
 		if (options.title) li.setAttribute("title", options.title);
 
