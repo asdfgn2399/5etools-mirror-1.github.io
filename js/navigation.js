@@ -151,7 +151,7 @@ class NavBar {
 			NavBar._CAT_SETTINGS,
 			{
 				html: "Load State from File",
-				click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt),
+				click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, isLoggedIn),
 				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from a file.",
 			},
 		);
@@ -783,9 +783,10 @@ NavBar.InteractionManager = class {
 		DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
 	}
 
-	static async _pOnClick_button_loadStateFile (evt) {
+	static async _pOnClick_button_loadStateFile (evt, isLoadedFromFirebase) {
 		evt.preventDefault();
-		const {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
+
+		const {jsons, errors} =  isLoadedFromFirebase ? {/*Access firebase account*/} : await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
 
 		DataUtil.doHandleFileLoadErrorsGeneric(errors);
 
@@ -909,4 +910,5 @@ NavBar.NodeAccordion = class extends NavBar.Node {
 	}
 };
 
+var isLoggedIn = false;
 NavBar.init();
