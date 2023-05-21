@@ -9,8 +9,25 @@ class NavBar {
 	}
 
 	static _onDomContentLoaded () {
+		const srcipt1 = document.createElement('script')
+		srcipt1.setAttribute('src', 'https://www.gstatic.com/firebasejs/8.2.4/firebase.js')
+		document.body.appendChild(srcipt1);
+		this.firebaseConfig = {
+			apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
+			authDomain: "etools-saved-state.firebaseapp.com",
+			databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
+			projectId: "etools-saved-state",
+			storageBucket: "etools-saved-state.appspot.com",
+			messagingSenderId: "150750103326",
+			appId: "1:150750103326:web:c41f230459b58bb108ab0f"
+		};
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
+		setTimeout(() => {
+			firebase.initializeApp(this.firebaseConfig);
+			NavBar.firebaseDatabase = firebase.database();
+			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
+		}, 2000)
 	}
 
 	static _onLoad () {
@@ -139,13 +156,28 @@ class NavBar {
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
-		this._addElement_button(
+		this._addElement_button( // Edit to have sign in / out seperate from loading data
 			NavBar._CAT_SETTINGS,
 			{
 				html: "Sign in",
 				id: "signInButton",
-				// click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, isLoggedIn),
+				click: async (evt) => {
+					var email = 'alexannett88@gmail.com'
+					var password = '5etools'
+					firebase
+				  	.auth()
+				  	.signInWithEmailAndPassword(email, password)
+					NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
+				},
 				title: "Sign in to load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...)",
+			},
+		);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Save State to Account",
+				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
+				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to your account",
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
@@ -787,21 +819,33 @@ NavBar.InteractionManager = class {
 		styleSwitcher.toggleWide();
 	}
 
-	static async _pOnClick_button_saveStateFile (evt) {
+	static async _pOnClick_button_saveStateFile (evt, toFirebase) {
 		evt.preventDefault();
 		const sync = StorageUtil.syncGetDump();
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
-		DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
+		if (toFirebase) {
+			console.log(dump)
+			NavBar.usersRef.child(/*Get current user uid*/'fiXZ9DPWJBcIhR1oYi6ueCQcgr72').update({data: JSON.stringify(dump)}) //TODO: Add userDownload extras and store more effectivaly
+		} else {
+			DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
+		}
 	}
 
 	static async _pOnClick_button_loadStateFile (evt, isLoadedFromFirebase) {
 		evt.preventDefault();
+		await NavBar.usersRef.child(/*Get current user uid*/'fiXZ9DPWJBcIhR1oYi6ueCQcgr72').once('value', function (snapshot) {
+			NavBar.currentFirebaseData = snapshot.val()
+			NavBar.currentFirebaseDataParsed = JSON.parse(NavBar.currentFirebaseData.data) //TODO: Update to match storage method
+		})
 
-		const {jsons, errors} =  isLoadedFromFirebase ? {/*Access firebase account*/} : await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
-
-		DataUtil.doHandleFileLoadErrorsGeneric(errors);
-
+		if (isLoadedFromFirebase) {
+			var jsons = [NavBar.currentFirebaseDataParsed]
+		} else {
+			var {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
+			DataUtil.doHandleFileLoadErrorsGeneric(errors);
+		}
+		
 		if (!jsons?.length) return;
 		const dump = jsons[0];
 
