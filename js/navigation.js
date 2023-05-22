@@ -1,5 +1,81 @@
 "use strict";
 
+function purgeArraysIntoObjects(obj, undo) {
+	var rawData;
+	if (undo) {
+		rawData = JSON.stringify(obj) || "";
+		rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
+		rawData = rawData.replaceAll('THISISNOTANARRAY', '[')
+		rawData = rawData.replaceAll('THISISACLOSING', ']')
+		rawData = rawData.replaceAll('"THISISANARRAY', '[')
+		rawData = rawData.replaceAll('THISISTHEENDOFANARRAY"', ']')
+		rawData = rawData.replaceAll(/\{"isArray":"true"\}/g, '[]')
+		rawData = rawData.replaceAll('\\', '')
+
+		console.log(rawData)
+		var tempObj = rawData.length > 0 ? JSON.parse(rawData) : {};
+
+		replaceVals(tempObj, 'array')
+		console.log(tempObj)
+		return tempObj;
+	} else {
+		var arrays = [];
+		var notArrays = []
+		rawData = JSON.stringify(obj)
+		console.log(rawData)
+		rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
+		rawData = rawData.replaceAll('[]', '{"isArray": "true"}')
+		rawData = rawData.replaceAll(/\[(?=\d)/g, 'THISISNOTANARRAY')
+		rawData = rawData.replaceAll(/(?<=\d)\]/g, 'THISISACLOSING')
+		var x = rawData.split('[')
+		for (let i = 0; i < x.length; i++) {
+			var y;
+			if (x[i].indexOf(']') !== -1) {
+				y = x[i].split(']')
+				arrays.push(y[0]);
+				notArrays.push(y[1])
+				y.splice(0, y.length)
+			} else {
+				notArrays.push(x[i])
+			}
+		}
+		
+		console.log(arrays)
+		var arrayStrings = [];
+		arrays.forEach(function(array) {
+			var z = JSON.stringify(array);
+			z = z.substring(1, z.length-1)
+			var a = '"THISISANARRAY' + z + 'THISISTHEENDOFANARRAY"'
+			arrayStrings.push(a)
+		})
+
+		var tempObjString = '';
+		for (var i = 0; i < arrayStrings.length; i++) {
+			tempObjString += notArrays[i];
+			tempObjString += arrayStrings[i]
+		}
+		tempObjString += notArrays[notArrays.length - 1]
+
+		console.log(JSON.parse(tempObjString))
+		return JSON.parse(tempObjString)
+	}
+}
+
+function replaceVals(object, key) {
+	var value;
+	Object.keys(object).some(function(k) {
+			if (k === key) {
+					object = object[k];
+					return true;
+			}
+			if (object[k] && typeof object[k] === 'object') {
+					value = replaceVals(object[k], key);
+					return value !== undefined;
+			}
+	});
+	return value;
+}
+
 class NavBar {
 	static init () {
 		this._initInstallPrompt();
@@ -23,11 +99,12 @@ class NavBar {
 		};
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
+		NavBar.firebaseSignedIn = false;
 		setTimeout(() => {
 			firebase.initializeApp(this.firebaseConfig);
 			NavBar.firebaseDatabase = firebase.database();
 			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
-		}, 2000)
+		}, 1000)
 	}
 
 	static _onLoad () {
@@ -156,20 +233,46 @@ class NavBar {
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
-		this._addElement_button( // Edit to have sign in / out seperate from loading data
+		this._addElement_button(
 			NavBar._CAT_SETTINGS,
 			{
 				html: "Sign in",
 				id: "signInButton",
-				click: async (evt) => {
-					var email = 'alexannett88@gmail.com'
-					var password = '5etools'
-					firebase
-				  	.auth()
-				  	.signInWithEmailAndPassword(email, password)
-					NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
+				click: async () => {
+					if (NavBar.firebaseSignedIn == false) {
+						var email = 'alexannett88@gmail.com' //TODO: Get email input from user
+						var password = '5etools' //TODO: Get password input from user
+						firebase.auth().signInWithEmailAndPassword(email, password).then((userObj) => {
+							signInButton.innerHTML = 'Log Out';
+							signInButton.title = 'Log out of your account';
+							NavBar.firebaseSignedIn = true
+							NavBar.userUID = userObj.user.uid
+							console.log(NavBar.userUID)
+						})
+					} else {
+						firebase.auth().signOut().then(() => {
+							signInButton.innerHTML = 'Sign in';
+							signInButton.title = 'Sign in to your account';
+							NavBar.firebaseSignedIn = false
+							NavBar.userUID = '';
+						})
+					}
 				},
-				title: "Sign in to load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...)",
+				title: "Sign in to your account",
+			}
+		);
+		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Load Saved State from Account",
+				id: "signInButton",
+				click: async (evt) => {
+					if (NavBar.userUID !== '') {
+						NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
+					}
+				},
+				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from your account",
 			},
 		);
 		this._addElement_button(
@@ -825,8 +928,7 @@ NavBar.InteractionManager = class {
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
 		if (toFirebase) {
-			console.log(dump)
-			NavBar.usersRef.child(/*Get current user uid*/'fiXZ9DPWJBcIhR1oYi6ueCQcgr72').update({data: JSON.stringify(dump)}) //TODO: Add userDownload extras and store more effectivaly
+			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER})
 		} else {
 			DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
 		}
@@ -834,13 +936,15 @@ NavBar.InteractionManager = class {
 
 	static async _pOnClick_button_loadStateFile (evt, isLoadedFromFirebase) {
 		evt.preventDefault();
-		await NavBar.usersRef.child(/*Get current user uid*/'fiXZ9DPWJBcIhR1oYi6ueCQcgr72').once('value', function (snapshot) {
-			NavBar.currentFirebaseData = snapshot.val()
-			NavBar.currentFirebaseDataParsed = JSON.parse(NavBar.currentFirebaseData.data) //TODO: Update to match storage method
-		})
-
+		
 		if (isLoadedFromFirebase) {
-			var jsons = [NavBar.currentFirebaseDataParsed]
+			await NavBar.usersRef.child(NavBar.userUID + '/5etools').once('value', function (snapshot) {
+				NavBar.currentFirebaseData = snapshot.val()
+				console.log(NavBar.currentFirebaseData)
+				NavBar.currentAsyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.async, true)
+				NavBar.currentSyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.sync, true)
+			})
+			var jsons = [{sync: NavBar.currentSyncStateData, async: NavBar.currentAsyncStateData}]
 		} else {
 			var {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
 			DataUtil.doHandleFileLoadErrorsGeneric(errors);
