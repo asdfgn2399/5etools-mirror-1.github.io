@@ -2,7 +2,7 @@
 
 // in deployment, `IS_DEPLOYED = "<version number>";` should be set below.
 globalThis.IS_DEPLOYED = undefined;
-globalThis.VERSION_NUMBER = /* 5ETOOLS_VERSION__OPEN */"1.179.1"/* 5ETOOLS_VERSION__CLOSE */;
+globalThis.VERSION_NUMBER = /* 5ETOOLS_VERSION__OPEN */"1.181.1"/* 5ETOOLS_VERSION__CLOSE */;
 globalThis.DEPLOYED_STATIC_ROOT = ""; // "https://static.5etools.com/"; // FIXME re-enable this when we have a CDN again
 globalThis.DEPLOYED_IMG_ROOT = undefined;
 // for the roll20 script to set
@@ -386,6 +386,7 @@ CleanUtil.SHARED_REPLACEMENTS = {
 CleanUtil.STR_REPLACEMENTS = {
 	"—": "\\u2014",
 	"–": "\\u2013",
+	"‑": "\\u2011",
 	"−": "\\u2212",
 	" ": "\\u00A0",
 };
@@ -923,6 +924,8 @@ globalThis.ElementUtil = {
 		mousedown,
 		mouseup,
 		mousemove,
+		pointerdown,
+		pointerup,
 		keydown,
 		html,
 		text,
@@ -952,6 +955,8 @@ globalThis.ElementUtil = {
 		if (mousedown) ele.addEventListener("mousedown", mousedown);
 		if (mouseup) ele.addEventListener("mouseup", mouseup);
 		if (mousemove) ele.addEventListener("mousemove", mousemove);
+		if (pointerdown) ele.addEventListener("pointerdown", pointerdown);
+		if (pointerup) ele.addEventListener("pointerup", pointerup);
 		if (keydown) ele.addEventListener("keydown", keydown);
 		if (html != null) ele.innerHTML = html;
 		if (text != null || txt != null) ele.textContent = text;
@@ -1434,28 +1439,7 @@ globalThis.MiscUtil = {
 
 	findCommonPrefix (strArr, {isRespectWordBoundaries} = {}) {
 		if (isRespectWordBoundaries) {
-			let prefixTks = null;
-			strArr
-				.map(str => str.split(" "))
-				.forEach(tks => {
-					if (prefixTks == null) {
-						prefixTks = tks;
-						return;
-					}
-
-					const minLen = Math.min(tks.length, prefixTks.length);
-					for (let i = 0; i < minLen; ++i) {
-						const cp = prefixTks[i];
-						const cs = tks[i];
-						if (cp !== cs) {
-							prefixTks = prefixTks.slice(0, i);
-							break;
-						}
-					}
-				});
-
-			if (!prefixTks.length) return "";
-			return `${prefixTks.join(" ")} `;
+			return MiscUtil._findCommonPrefixSuffixWords({strArr});
 		}
 
 		let prefix = null;
@@ -1476,6 +1460,44 @@ globalThis.MiscUtil = {
 			}
 		});
 		return prefix;
+	},
+
+	findCommonSuffix (strArr, {isRespectWordBoundaries} = {}) {
+		if (!isRespectWordBoundaries) throw new Error(`Unimplemented!`);
+
+		return MiscUtil._findCommonPrefixSuffixWords({strArr, isSuffix: true});
+	},
+
+	_findCommonPrefixSuffixWords ({strArr, isSuffix}) {
+		let prefixTks = null;
+
+		strArr
+			.map(str => str.split(" "))
+			.forEach(tks => {
+				if (isSuffix) tks.reverse();
+
+				if (prefixTks == null) return prefixTks = [...tks];
+
+				const minLen = Math.min(tks.length, prefixTks.length);
+				while (prefixTks.length > minLen) prefixTks.pop();
+
+				for (let i = 0; i < minLen; ++i) {
+					const cp = prefixTks[i];
+					const cs = tks[i];
+					if (cp !== cs) {
+						prefixTks = prefixTks.slice(0, i);
+						break;
+					}
+				}
+			});
+
+		if (isSuffix) prefixTks.reverse();
+
+		if (!prefixTks.length) return "";
+
+		return isSuffix
+			? ` ${prefixTks.join(" ")}`
+			: `${prefixTks.join(" ")} `;
 	},
 
 	/**
@@ -1600,7 +1622,7 @@ globalThis.MiscUtil = {
 		return new Promise(resolve => setTimeout(() => resolve(resolveAs), msecs));
 	},
 
-	GENERIC_WALKER_ENTRIES_KEY_BLOCKLIST: new Set(["caption", "type", "colLabels", "name", "colStyles", "style", "shortName", "subclassShortName", "id", "path"]),
+	GENERIC_WALKER_ENTRIES_KEY_BLOCKLIST: new Set(["caption", "type", "colLabels", "colLabelGroups", "name", "colStyles", "style", "shortName", "subclassShortName", "id", "path"]),
 
 	/**
 	 * @param [opts]
@@ -2009,7 +2031,7 @@ globalThis.ContextUtil = {
 		if (ContextUtil._isInit) return;
 		ContextUtil._isInit = true;
 
-		$(document.body).click(() => ContextUtil._menus.forEach(menu => menu.close()));
+		$(document.body).on("pointerup", () => ContextUtil._menus.forEach(menu => menu.close()));
 	},
 
 	getMenu (actions) {
@@ -2163,7 +2185,7 @@ globalThis.ContextUtil = {
 
 		this._render_$btnAction = function ({menu}) {
 			const $btnAction = $(`<div class="w-100 min-w-0 ui-ctx__btn py-1 pl-5 ${this.fnActionAlt ? "" : "pr-5"}" ${this.isDisabled ? "disabled" : ""} tabindex="0">${this.text}</div>`)
-				.click(async evt => {
+				.on("pointerup", async evt => {
 					if (this.isDisabled) return;
 
 					evt.preventDefault();
@@ -2187,7 +2209,7 @@ globalThis.ContextUtil = {
 			if (!this.fnActionAlt) return null;
 
 			const $btnActionAlt = $(`<div class="ui-ctx__btn ml-1 bl-1 py-1 px-4" ${this.isDisabled ? "disabled" : ""}>${this.textAlt ?? `<span class="glyphicon glyphicon-cog"></span>`}</div>`)
-				.click(async evt => {
+				.on("pointerup", async evt => {
 					if (this.isDisabled) return;
 
 					evt.preventDefault();
@@ -2266,7 +2288,7 @@ globalThis.ContextUtil = {
 							text: this._fnGetDisplayValue ? this._fnGetDisplayValue(val) : val,
 						});
 					}),
-				click: async evt => {
+				pointerup: async evt => {
 					evt.preventDefault();
 					evt.stopPropagation();
 				},
@@ -2664,6 +2686,7 @@ UrlUtil.URL_TO_HASH_BUILDER["itemEntry"] = UrlUtil.URL_TO_HASH_GENERIC;
 UrlUtil.URL_TO_HASH_BUILDER["itemProperty"] = (it) => UrlUtil.encodeArrayForHash(it.abbreviation, it.source);
 UrlUtil.URL_TO_HASH_BUILDER["itemType"] = (it) => UrlUtil.encodeArrayForHash(it.abbreviation, it.source);
 UrlUtil.URL_TO_HASH_BUILDER["itemTypeAdditionalEntries"] = (it) => UrlUtil.encodeArrayForHash(it.appliesTo, it.source);
+UrlUtil.URL_TO_HASH_BUILDER["itemMastery"] = UrlUtil.URL_TO_HASH_GENERIC;
 UrlUtil.URL_TO_HASH_BUILDER["skill"] = UrlUtil.URL_TO_HASH_GENERIC;
 UrlUtil.URL_TO_HASH_BUILDER["sense"] = UrlUtil.URL_TO_HASH_GENERIC;
 
@@ -2823,7 +2846,7 @@ UrlUtil.SUBLIST_PAGES = {
 
 UrlUtil.PAGE_TO_PROPS = {};
 UrlUtil.PAGE_TO_PROPS[UrlUtil.PG_SPELLS] = ["spell"];
-UrlUtil.PAGE_TO_PROPS[UrlUtil.PG_ITEMS] = ["item", "itemGroup", "itemType", "itemEntry", "itemProperty", "itemTypeAdditionalEntries", "baseitem", "magicvariant"];
+UrlUtil.PAGE_TO_PROPS[UrlUtil.PG_ITEMS] = ["item", "itemGroup", "itemType", "itemEntry", "itemProperty", "itemTypeAdditionalEntries", "itemMastery", "baseitem", "magicvariant"];
 
 if (!IS_DEPLOYED && !IS_VTT && typeof window !== "undefined") {
 	// for local testing, hotkey to get a link to the current page on the main site
