@@ -12,17 +12,12 @@ function purgeArraysIntoObjects(obj, undo) {
 		rawData = rawData.replaceAll(/\{"isArray":"true"\}/g, '[]')
 		rawData = rawData.replaceAll('\\', '')
 
-		console.log(rawData)
 		var tempObj = rawData.length > 0 ? JSON.parse(rawData) : {};
-
-		replaceVals(tempObj, 'array')
-		console.log(tempObj)
 		return tempObj;
 	} else {
 		var arrays = [];
 		var notArrays = []
 		rawData = JSON.stringify(obj)
-		console.log(rawData)
 		rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
 		rawData = rawData.replaceAll('[]', '{"isArray": "true"}')
 		rawData = rawData.replaceAll(/\[(?=\d)/g, 'THISISNOTANARRAY')
@@ -40,7 +35,6 @@ function purgeArraysIntoObjects(obj, undo) {
 			}
 		}
 		
-		console.log(arrays)
 		var arrayStrings = [];
 		arrays.forEach(function(array) {
 			var z = JSON.stringify(array);
@@ -56,24 +50,8 @@ function purgeArraysIntoObjects(obj, undo) {
 		}
 		tempObjString += notArrays[notArrays.length - 1]
 
-		console.log(JSON.parse(tempObjString))
 		return JSON.parse(tempObjString)
 	}
-}
-
-function replaceVals(object, key) {
-	var value;
-	Object.keys(object).some(function(k) {
-			if (k === key) {
-					object = object[k];
-					return true;
-			}
-			if (object[k] && typeof object[k] === 'object') {
-					value = replaceVals(object[k], key);
-					return value !== undefined;
-			}
-	});
-	return value;
 }
 
 class NavBar {
@@ -99,7 +77,7 @@ class NavBar {
 		};
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
-		NavBar.firebaseSignedIn = false;
+		NavBar.firebaseSignedIn = false
 		setTimeout(() => {
 			firebase.initializeApp(this.firebaseConfig);
 			NavBar.firebaseDatabase = firebase.database();
@@ -136,6 +114,10 @@ class NavBar {
 			$(`.page__nav-hidden-mobile`).toggleClass("block", $(btnShowHide).hasClass("active"));
 		};
 		document.getElementById("navigation").prepend(btnShowHide);
+		const signInPopup = document.createElement("div")
+		signInPopup.id = "navPopup"
+		signInPopup.className = "nav-popup sign-in-menu"
+		document.getElementById("navigation").append(signInPopup);
 
 		this._addElement_li(null, "index.html", "Home", {isRoot: true});
 
@@ -236,51 +218,56 @@ class NavBar {
 		this._addElement_button(
 			NavBar._CAT_SETTINGS,
 			{
-				html: "Sign in",
+				html: NavBar.firebaseSignedIn ? 'Log Out' : 'Sign In',
 				id: "signInButton",
 				click: async () => {
 					if (NavBar.firebaseSignedIn == false) {
-						var email = 'alexannett88@gmail.com' //TODO: Get email input from user
-						var password = '5etools' //TODO: Get password input from user
-						firebase.auth().signInWithEmailAndPassword(email, password).then((userObj) => {
-							signInButton.innerHTML = 'Log Out';
-							signInButton.title = 'Log out of your account';
-							NavBar.firebaseSignedIn = true
-							NavBar.userUID = userObj.user.uid
-							console.log(NavBar.userUID)
-						})
+						document.getElementById('navPopup').innerHTML = NavBar.initPopup('signIn');
+						document.getElementById('navPopup').style.top = '175%'
+						document.getElementById('navPopup').click();
 					} else {
 						firebase.auth().signOut().then(() => {
-							signInButton.innerHTML = 'Sign in';
+							signInButton.innerHTML = 'Sign In';
 							signInButton.title = 'Sign in to your account';
 							NavBar.firebaseSignedIn = false
 							NavBar.userUID = '';
 						})
 					}
 				},
-				title: "Sign in to your account",
+				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
+			}
+		);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Create Account",
+				click: async () => {
+					document.getElementById('navPopup').innerHTML = NavBar.initPopup('create');
+					document.getElementById('navPopup').style.top = '175%'
+					document.getElementById('navPopup').click();
+				},
+				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
 			}
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
 		this._addElement_button(
 			NavBar._CAT_SETTINGS,
 			{
+				html: "Save State to Account",
+				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
+				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to your account",
+			},
+		);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
 				html: "Load Saved State from Account",
-				id: "signInButton",
 				click: async (evt) => {
 					if (NavBar.userUID !== '') {
 						NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
 					}
 				},
 				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from your account",
-			},
-		);
-		this._addElement_button(
-			NavBar._CAT_SETTINGS,
-			{
-				html: "Save State to Account",
-				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
-				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to your account",
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
@@ -879,6 +866,46 @@ class NavBar {
 			delete NavBar._timersOpen[k];
 		});
 	}
+
+	static initPopup (type) {
+		const isCreating = type == "create"
+		const title = isCreating ? 'Create a 5etools account' : 'Sign In to your 5etools account';
+		const btnTxt = isCreating ? 'Create account' : 'Sign In'
+		return `<h3>${title}</h3>
+    <button onclick="document.getElementById('navPopup').style.top = '-500px';" class="btn close-menu-button">X</button>
+		<label for="popupEmail">Email Address:</label><br>
+    <input id="popupEmail" type="text" placeholder="e.g. yourname@example.com">
+		<label for="popupPassword">Password:</label><br>
+    <input id="popupPassword" type="text" placeholder="e.g. h$kd9I8K4nb-D6r"><br>
+		<button onclick="NavBar.firebaseSignIn(popupEmail.value, popupPassword.value, ${isCreating})" class="btn bottom-right-button">${btnTxt}</button>`
+ 
+	}
+
+	static async firebaseSignIn (email, password, creating) {
+		if (!creating) {
+			firebase.auth().signInWithEmailAndPassword(email, password).then((userObj) => {
+				if (userObj) {
+					signInButton.innerHTML = 'Log Out';
+					signInButton.title = 'Log out of your account';
+					document.getElementById('navPopup').style.top = '-500px';
+					NavBar.firebaseSignedIn = true
+					NavBar.userUID = userObj.user.uid
+					console.log(NavBar.userUID)
+				}
+			})
+		} else {
+			firebase.auth().createUserWithEmailAndPassword(email, password).then((userObj) => {
+				if (userObj) {
+					signInButton.innerHTML = 'Log Out';
+					signInButton.title = 'Log out of your account';
+					document.getElementById('navPopup').style.top = '-500px';
+					NavBar.firebaseSignedIn = true
+					NavBar.userUID = userObj.user.uid
+					console.log(NavBar.userUID)
+				}
+			})
+		}
+	}
 }
 NavBar._DROP_TIME = 250;
 NavBar._MIN_MOVE_PX = 3;
@@ -1070,5 +1097,4 @@ NavBar.NodeAccordion = class extends NavBar.Node {
 	}
 };
 
-var isLoggedIn = false;
 NavBar.init();
