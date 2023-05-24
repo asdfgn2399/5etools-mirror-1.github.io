@@ -901,6 +901,7 @@ class NavBar {
 					document.getElementById('navPopup').style.top = '-500px';
 					NavBar.firebaseSignedIn = true
 					NavBar.userUID = userObj.user.uid
+					NavBar.usersRef.child(NavBar.userUID + '/5etools').set({siteVersion: VERSION_NUMBER})
 					console.log(NavBar.userUID)
 				}
 			})
