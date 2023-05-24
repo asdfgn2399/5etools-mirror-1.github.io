@@ -1,45 +1,67 @@
 "use strict";
 
 function purgeArraysIntoObjects(obj, undo) {
+	console.log('Function "purgeArraysIntoObjects" has been run!')
 	var rawData;
 	if (undo) {
-		rawData = JSON.stringify(obj) || "";
+		rawData = JSON.stringify(obj) || "{}";
 		rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
-		rawData = rawData.replaceAll('THISISNOTANARRAY', '[')
-		rawData = rawData.replaceAll('THISISACLOSING', ']')
-		rawData = rawData.replaceAll('"THISISANARRAY', '[')
-		rawData = rawData.replaceAll('THISISTHEENDOFANARRAY"', ']')
-		rawData = rawData.replaceAll(/\{"isArray":"true"\}/g, '[]')
+		rawData = rawData.replaceAll('"THISISANOPENINGBRACKET', '[')
+		rawData = rawData.replaceAll('THISISANCLOSINGBRACKET"', ']')
 		rawData = rawData.replaceAll('\\', '')
+		rawData = rawData.replaceAll('COMMENTTHIS', '\\')
 
-		var tempObj = rawData.length > 0 ? JSON.parse(rawData) : {};
-		return tempObj;
+		return JSON.parse(rawData); 
 	} else {
 		var arrays = [];
-		var notArrays = []
+		var notArrays = [];
 		rawData = JSON.stringify(obj)
 		rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
-		rawData = rawData.replaceAll('[]', '{"isArray": "true"}')
-		rawData = rawData.replaceAll(/\[(?=\d)/g, 'THISISNOTANARRAY')
-		rawData = rawData.replaceAll(/(?<=\d)\]/g, 'THISISACLOSING')
-		var x = rawData.split('[')
-		for (let i = 0; i < x.length; i++) {
-			var y;
-			if (x[i].indexOf(']') !== -1) {
-				y = x[i].split(']')
-				arrays.push(y[0]);
-				notArrays.push(y[1])
-				y.splice(0, y.length)
+		rawData = rawData.replaceAll('\\', 'COMMENTTHIS')
+
+		var arrayStartIndex = 0;
+		var arrayEndIndex = -1;
+		var fromIndex = 0;
+		var endLoop = false;
+		while (!endLoop) {
+			arrayStartIndex = rawData.indexOf('[', fromIndex)
+			console.log(arrayStartIndex)
+			console.log(fromIndex)
+			if (arrayStartIndex == -1) {
+				endLoop = true;
+				notArrays.push(rawData.substring(arrayEndIndex + 1, rawData.length))
 			} else {
-				notArrays.push(x[i])
+				notArrays.push(rawData.substring(arrayEndIndex + 1, arrayStartIndex))
+				fromIndex = arrayStartIndex + 1;
+				var count = 0;
+				var testIndex = fromIndex;
+				var endSecondLoop = false
+				while (!endSecondLoop) {
+					arrayEndIndex = rawData.indexOf(']', testIndex)
+					testIndex = rawData.indexOf('[', testIndex + 1) == -1 ? rawData.length + 1 : rawData.indexOf('[', testIndex + 1)
+					console.log(arrayEndIndex)
+					console.log(testIndex)
+					if (testIndex > arrayEndIndex && count == 0) {
+						fromIndex = arrayEndIndex + 1;
+						endSecondLoop = true
+					} else if (testIndex > arrayEndIndex) {
+						testIndex = arrayEndIndex + 1;
+						count--
+					} else {
+						count++
+					}
+				}
+				arrays.push(rawData.substring(arrayStartIndex + 1, arrayEndIndex))
 			}
 		}
+		if (notArrays.length == 0) notArrays.push(rawData)
+		console.log(notArrays)
 		
 		var arrayStrings = [];
 		arrays.forEach(function(array) {
 			var z = JSON.stringify(array);
-			z = z.substring(1, z.length-1)
-			var a = '"THISISANARRAY' + z + 'THISISTHEENDOFANARRAY"'
+			z = z.substring(1, z.length - 1)
+			var a = '"THISISANOPENINGBRACKET' + z + 'THISISANCLOSINGBRACKET"'
 			arrayStrings.push(a)
 		})
 
@@ -956,7 +978,7 @@ NavBar.InteractionManager = class {
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
 		if (toFirebase) {
-			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER})
+			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
 		} else {
 			DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
 		}
