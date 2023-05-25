@@ -305,7 +305,7 @@ class NavBar {
 			NavBar._CAT_SETTINGS,
 			{
 				html: "Load State from File",
-				click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, isLoggedIn),
+				click: async (evt) => NavBar.InteractionManager._pOnClick_button_loadStateFile(evt),
 				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from a file.",
 			},
 		);
