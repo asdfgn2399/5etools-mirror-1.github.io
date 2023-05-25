@@ -1,5 +1,81 @@
 "use strict";
 
+function purgeArraysIntoObjects(obj, undo) {
+	console.log('Function "purgeArraysIntoObjects" has been run!')
+	var rawData;
+	if (undo) {
+		rawData = JSON.stringify(obj) || "{}";
+		rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
+		rawData = rawData.replaceAll('"THISISANOPENINGBRACKET', '[')
+		rawData = rawData.replaceAll('THISISANCLOSINGBRACKET"', ']')
+		rawData = rawData.replaceAll('\\', '')
+		rawData = rawData.replaceAll('COMMENTTHIS', '\\')
+
+		return JSON.parse(rawData); 
+	} else {
+		var arrays = [];
+		var notArrays = [];
+		rawData = JSON.stringify(obj)
+		rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
+		rawData = rawData.replaceAll('\\', 'COMMENTTHIS')
+
+		var arrayStartIndex = 0;
+		var arrayEndIndex = -1;
+		var fromIndex = 0;
+		var endLoop = false;
+		while (!endLoop) {
+			arrayStartIndex = rawData.indexOf('[', fromIndex)
+			console.log(arrayStartIndex)
+			console.log(fromIndex)
+			if (arrayStartIndex == -1) {
+				endLoop = true;
+				notArrays.push(rawData.substring(arrayEndIndex + 1, rawData.length))
+			} else {
+				notArrays.push(rawData.substring(arrayEndIndex + 1, arrayStartIndex))
+				fromIndex = arrayStartIndex + 1;
+				var count = 0;
+				var testIndex = fromIndex;
+				var endSecondLoop = false
+				while (!endSecondLoop) {
+					arrayEndIndex = rawData.indexOf(']', testIndex)
+					testIndex = rawData.indexOf('[', testIndex + 1) == -1 ? rawData.length + 1 : rawData.indexOf('[', testIndex + 1)
+					console.log(arrayEndIndex)
+					console.log(testIndex)
+					if (testIndex > arrayEndIndex && count == 0) {
+						fromIndex = arrayEndIndex + 1;
+						endSecondLoop = true
+					} else if (testIndex > arrayEndIndex) {
+						testIndex = arrayEndIndex + 1;
+						count--
+					} else {
+						count++
+					}
+				}
+				arrays.push(rawData.substring(arrayStartIndex + 1, arrayEndIndex))
+			}
+		}
+		if (notArrays.length == 0) notArrays.push(rawData)
+		console.log(notArrays)
+		
+		var arrayStrings = [];
+		arrays.forEach(function(array) {
+			var z = JSON.stringify(array);
+			z = z.substring(1, z.length - 1)
+			var a = '"THISISANOPENINGBRACKET' + z + 'THISISANCLOSINGBRACKET"'
+			arrayStrings.push(a)
+		})
+
+		var tempObjString = '';
+		for (var i = 0; i < arrayStrings.length; i++) {
+			tempObjString += notArrays[i];
+			tempObjString += arrayStrings[i]
+		}
+		tempObjString += notArrays[notArrays.length - 1]
+
+		return JSON.parse(tempObjString)
+	}
+}
+
 class NavBar {
 	static init () {
 		this._initInstallPrompt();
@@ -9,8 +85,26 @@ class NavBar {
 	}
 
 	static _onDomContentLoaded () {
+		const srcipt1 = document.createElement('script')
+		srcipt1.setAttribute('src', 'https://www.gstatic.com/firebasejs/8.2.4/firebase.js')
+		document.body.appendChild(srcipt1);
+		this.firebaseConfig = {
+			apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
+			authDomain: "etools-saved-state.firebaseapp.com",
+			databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
+			projectId: "etools-saved-state",
+			storageBucket: "etools-saved-state.appspot.com",
+			messagingSenderId: "150750103326",
+			appId: "1:150750103326:web:c41f230459b58bb108ab0f"
+		};
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
+		NavBar.firebaseSignedIn = false
+		setTimeout(() => {
+			firebase.initializeApp(this.firebaseConfig);
+			NavBar.firebaseDatabase = firebase.database();
+			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
+		}, 1000)
 	}
 
 	static _onLoad () {
@@ -42,6 +136,10 @@ class NavBar {
 			$(`.page__nav-hidden-mobile`).toggleClass("block", $(btnShowHide).hasClass("active"));
 		};
 		document.getElementById("navigation").prepend(btnShowHide);
+		const signInPopup = document.createElement("div")
+		signInPopup.id = "navPopup"
+		signInPopup.className = "nav-popup sign-in-menu"
+		document.getElementById("navigation").append(signInPopup);
 
 		this._addElement_li(null, "index.html", "Home", {isRoot: true});
 
@@ -136,6 +234,62 @@ class NavBar {
 				click: (evt) => NavBar.InteractionManager._onClick_button_wideMode(evt),
 				className: "wideModeToggle",
 				title: "This feature is unsupported. Expect bugs.",
+			},
+		);
+		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: NavBar.firebaseSignedIn ? 'Log Out' : 'Sign In',
+				id: "signInButton",
+				click: async () => {
+					if (NavBar.firebaseSignedIn == false) {
+						document.getElementById('navPopup').innerHTML = NavBar.initPopup('signIn');
+						document.getElementById('navPopup').style.top = '175%'
+						document.getElementById('navPopup').click();
+					} else {
+						firebase.auth().signOut().then(() => {
+							signInButton.innerHTML = 'Sign In';
+							signInButton.title = 'Sign in to your account';
+							NavBar.firebaseSignedIn = false
+							NavBar.userUID = '';
+						})
+					}
+				},
+				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
+			}
+		);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Create Account",
+				click: async () => {
+					document.getElementById('navPopup').innerHTML = NavBar.initPopup('create');
+					document.getElementById('navPopup').style.top = '175%'
+					document.getElementById('navPopup').click();
+				},
+				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
+			}
+		);
+		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Save State to Account",
+				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
+				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to your account",
+			},
+		);
+		this._addElement_button(
+			NavBar._CAT_SETTINGS,
+			{
+				html: "Load Saved State from Account",
+				click: async (evt) => {
+					if (NavBar.userUID !== '') {
+						NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
+					}
+				},
+				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from your account",
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
@@ -555,6 +709,8 @@ class NavBar {
 
 		if (options.context) a.oncontextmenu = options.context;
 
+		if (options.id && !document.getElementById(options.id)) a.id = options.id;
+
 		if (options.title) li.setAttribute("title", options.title);
 
 		li.appendChild(a);
@@ -732,6 +888,47 @@ class NavBar {
 			delete NavBar._timersOpen[k];
 		});
 	}
+
+	static initPopup (type) {
+		const isCreating = type == "create"
+		const title = isCreating ? 'Create a 5etools account' : 'Sign In to your 5etools account';
+		const btnTxt = isCreating ? 'Create account' : 'Sign In'
+		return `<h3>${title}</h3>
+    <button onclick="document.getElementById('navPopup').style.top = '-500px';" class="btn close-menu-button">X</button>
+		<label for="popupEmail">Email Address:</label><br>
+    <input id="popupEmail" type="text" placeholder="e.g. yourname@example.com">
+		<label for="popupPassword">Password:</label><br>
+    <input id="popupPassword" type="text" placeholder="e.g. h$kd9I8K4nb-D6r"><br>
+		<button onclick="NavBar.firebaseSignIn(popupEmail.value, popupPassword.value, ${isCreating})" class="btn bottom-right-button">${btnTxt}</button>`
+ 
+	}
+
+	static async firebaseSignIn (email, password, creating) {
+		if (!creating) {
+			firebase.auth().signInWithEmailAndPassword(email, password).then((userObj) => {
+				if (userObj) {
+					signInButton.innerHTML = 'Log Out';
+					signInButton.title = 'Log out of your account';
+					document.getElementById('navPopup').style.top = '-500px';
+					NavBar.firebaseSignedIn = true
+					NavBar.userUID = userObj.user.uid
+					console.log(NavBar.userUID)
+				}
+			})
+		} else {
+			firebase.auth().createUserWithEmailAndPassword(email, password).then((userObj) => {
+				if (userObj) {
+					signInButton.innerHTML = 'Log Out';
+					signInButton.title = 'Log out of your account';
+					document.getElementById('navPopup').style.top = '-500px';
+					NavBar.firebaseSignedIn = true
+					NavBar.userUID = userObj.user.uid
+					NavBar.usersRef.child(NavBar.userUID + '/5etools').set({siteVersion: VERSION_NUMBER})
+					console.log(NavBar.userUID)
+				}
+			})
+		}
+	}
 }
 NavBar._DROP_TIME = 250;
 NavBar._MIN_MOVE_PX = 3;
@@ -775,20 +972,34 @@ NavBar.InteractionManager = class {
 		styleSwitcher.toggleWide();
 	}
 
-	static async _pOnClick_button_saveStateFile (evt) {
+	static async _pOnClick_button_saveStateFile (evt, toFirebase) {
 		evt.preventDefault();
 		const sync = StorageUtil.syncGetDump();
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
-		DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
+		if (toFirebase) {
+			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
+		} else {
+			DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
+		}
 	}
 
-	static async _pOnClick_button_loadStateFile (evt) {
+	static async _pOnClick_button_loadStateFile (evt, isLoadedFromFirebase) {
 		evt.preventDefault();
-		const {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
-
-		DataUtil.doHandleFileLoadErrorsGeneric(errors);
-
+		
+		if (isLoadedFromFirebase) {
+			await NavBar.usersRef.child(NavBar.userUID + '/5etools').once('value', function (snapshot) {
+				NavBar.currentFirebaseData = snapshot.val()
+				console.log(NavBar.currentFirebaseData)
+				NavBar.currentAsyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.async, true)
+				NavBar.currentSyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.sync, true)
+			})
+			var jsons = [{sync: NavBar.currentSyncStateData, async: NavBar.currentAsyncStateData}]
+		} else {
+			var {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
+			DataUtil.doHandleFileLoadErrorsGeneric(errors);
+		}
+		
 		if (!jsons?.length) return;
 		const dump = jsons[0];
 
