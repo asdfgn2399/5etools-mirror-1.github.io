@@ -86,29 +86,32 @@ class NavBar {
 
 	static _onDomContentLoaded () {
 		const srcipt1 = document.createElement('script')
+		srcipt1.onload = function() {
+			const firebaseConfig = {
+				apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
+				authDomain: "etools-saved-state.firebaseapp.com",
+				databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
+				projectId: "etools-saved-state",
+				storageBucket: "etools-saved-state.appspot.com",
+				messagingSenderId: "150750103326",
+				appId: "1:150750103326:web:c41f230459b58bb108ab0f"
+			};
+			firebase.initializeApp(firebaseConfig);
+			NavBar.firebaseDatabase = firebase.database();
+			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
+		}
 		srcipt1.setAttribute('src', 'https://www.gstatic.com/firebasejs/8.2.4/firebase.js')
 		document.body.appendChild(srcipt1);
 		const style1 = document.createElement('link')
-		style1.setAttribute('href', 'https://raw.githubusercontent.com/asdfgn2399/asdfgn2399-5etools-mirror-1.github.io/master/css/navSignIn.css')
 		style1.setAttribute('rel', 'stylesheet')
+		style1.setAttribute('href', 'css/navSignIn.css')
 		document.head.appendChild(style1);
-		this.firebaseConfig = {
-			apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
-			authDomain: "etools-saved-state.firebaseapp.com",
-			databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
-			projectId: "etools-saved-state",
-			storageBucket: "etools-saved-state.appspot.com",
-			messagingSenderId: "150750103326",
-			appId: "1:150750103326:web:c41f230459b58bb108ab0f"
-		};
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
 		NavBar.firebaseSignedIn = false
-		setTimeout(() => {
-			firebase.initializeApp(this.firebaseConfig);
-			NavBar.firebaseDatabase = firebase.database();
-			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
-		}, 1000)
+		// setTimeout(() => {
+			
+		// }, 1000)
 	}
 
 	static _onLoad () {
