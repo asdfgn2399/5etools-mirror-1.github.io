@@ -88,6 +88,9 @@ class NavBar {
 		const srcipt1 = document.createElement('script')
 		srcipt1.setAttribute('src', 'https://www.gstatic.com/firebasejs/8.2.4/firebase.js')
 		document.body.appendChild(srcipt1);
+		const style1 = document.createElement('script')
+		style1.setAttribute('href', 'https://raw.githubusercontent.com/asdfgn2399/asdfgn2399-5etools-mirror-1.github.io/master/css/navSignIn.css')
+		document.body.appendChild(style1);
 		this.firebaseConfig = {
 			apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
 			authDomain: "etools-saved-state.firebaseapp.com",
