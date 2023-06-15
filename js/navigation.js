@@ -899,7 +899,7 @@ class NavBar {
 		return `<h3>${title}</h3>
     <button onclick="document.getElementById('navPopup').style.top = '-500px';" class="btn close-menu-button">X</button>
 		<label for="popupEmail">Email Address:</label><br>
-    <input id="popupEmail" type="text" placeholder="e.g. yourname@example.com">
+    <input id="popupEmail" type="text" placeholder="e.g. yourname@example.com"><br>
 		<label for="popupPassword">Password:</label><br>
     <input id="popupPassword" type="text" placeholder="e.g. h$kd9I8K4nb-D6r"><br>
 		<button onclick="NavBar.firebaseSignIn(popupEmail.value, popupPassword.value, ${isCreating})" class="btn bottom-right-button">${btnTxt}</button>`
