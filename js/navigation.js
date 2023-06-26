@@ -87,7 +87,7 @@ class NavBar {
 	static _onDomContentLoaded () {
 		const srcipt1 = document.createElement('script')
 		srcipt1.onload = function() {
-			const firebaseConfig = process.env.MY_SECRET1/*{
+			const firebaseConfig = os.environ["MY_SECRET1"]/*/{
 				apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
 				authDomain: "etools-saved-state.firebaseapp.com",
 				databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
