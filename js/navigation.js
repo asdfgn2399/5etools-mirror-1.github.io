@@ -87,7 +87,7 @@ class NavBar {
 	static _onDomContentLoaded () {
 		const srcipt1 = document.createElement('script')
 		srcipt1.onload = function() {
-			const firebaseConfig = os.environ["MY_SECRET1"]/*/{
+			const firebaseConfig = {
 				apiKey: "AIzaSyD78WqBiCP94A7U5NEIO4ByubCnCXZK5lY",
 				authDomain: "etools-saved-state.firebaseapp.com",
 				databaseURL: "https://etools-saved-state-default-rtdb.firebaseio.com",
@@ -95,7 +95,7 @@ class NavBar {
 				storageBucket: "etools-saved-state.appspot.com",
 				messagingSenderId: "150750103326",
 				appId: "1:150750103326:web:c41f230459b58bb108ab0f"
-			};*/
+			};
 			firebase.initializeApp(firebaseConfig);
 			NavBar.firebaseDatabase = firebase.database();
 			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
