@@ -1137,7 +1137,7 @@ class CreatureParser extends BaseParser {
 		DetectNamedCreature.tryRun(stats);
 		TagImmResVulnConditional.tryRun(stats);
 		DragonAgeTag.tryRun(stats);
-		AttachedSpellTag.tryRun(stats);
+		AttachedItemTag.tryRun(stats);
 		this._doStatblockPostProcess_doCleanup(stats, options);
 	}
 
@@ -1282,7 +1282,7 @@ class CreatureParser extends BaseParser {
 							return "";
 						}).trim();
 
-						pt = pt.replace(/from [^)]+$/i, (...m) => {
+						pt = pt.replace(/(?:damage )?from [^)]+$/i, (...m) => {
 							if (note) throw new Error(`Already has note!`);
 							note = m[0];
 							return "";
