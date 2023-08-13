@@ -50,7 +50,7 @@ jobs:
                sed -i 's/sw-injector.js//g' .gitignore
 
          -  name: Export API Key
-            run: sh setEnvironment.sh ${{ secrets.FIREBASECONFIG }}
+            run: sh .github/setEnvironment.sh ${{ secrets.FIREBASECONFIG }}
 
          -  name: Build SEO Pages
             env:
