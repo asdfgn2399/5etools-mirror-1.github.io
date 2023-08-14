@@ -6,4 +6,4 @@ if [[ $# -eq 0 ]]; then
 fi
 
 mkdir env
-echo "export const environment = { firebase_api_key : '$1' }"  > env/env.js
+echo "export const environment = { firebaseApiKey : $1 }"  > env/env.js

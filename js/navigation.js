@@ -87,10 +87,7 @@ class NavBar {
 	static _onDomContentLoaded () {
 		const srcipt1 = document.createElement('script')
 		srcipt1.onload = function() {
-			if (environment?.firebase_api_key == true) var firebaseConfig = environment.firebase_api_key;
-			else {
-				console.log("This dosen't work")
-			} 
+			const firebaseConfig = environment?.firebase_api_key; 
 			firebase.initializeApp(firebaseConfig);
 			NavBar.firebaseDatabase = firebase.database();
 			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
