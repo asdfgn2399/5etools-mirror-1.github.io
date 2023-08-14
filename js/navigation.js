@@ -76,6 +76,15 @@ function purgeArraysIntoObjects(obj, undo) {
 	}
 }
 
+function addElement(type, params) {
+	var newElement = document.createElement(type)
+	var keys = Object.keys(params)
+	keys.forEach(key => {
+		newElement.setAttribute(key, params[key])
+	});
+	return document.body.appendChild(newElement)
+}
+
 class NavBar {
 	static init () {
 		this._initInstallPrompt();
@@ -85,19 +94,21 @@ class NavBar {
 	}
 
 	static _onDomContentLoaded () {
-		const srcipt1 = document.createElement('script')
-		srcipt1.onload = function() {
-			const firebaseConfig = environment?.firebase_api_key; 
-			firebase.initializeApp(firebaseConfig);
-			NavBar.firebaseDatabase = firebase.database();
-			NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
-		}
-		srcipt1.setAttribute('src', 'https://www.gstatic.com/firebasejs/8.2.4/firebase.js')
-		document.body.appendChild(srcipt1);
-		const style1 = document.createElement('link')
-		style1.setAttribute('rel', 'stylesheet')
-		style1.setAttribute('href', 'css/navSignIn.css')
-		document.head.appendChild(style1);
+		addElement('script', {
+			src: "https://www.gstatic.com/firebasejs/8.2.4/firebase.js"
+		}).onload = function() {
+			import("../.github/env/env.js").then((env) => {
+				console.log(env)
+				const firebaseConfig = env.environment.firebaseApiKey; 
+				firebase.initializeApp(firebaseConfig);
+				NavBar.firebaseDatabase = firebase.database();
+				NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
+			})
+		};
+		addElement('link', {
+			rel: "stylesheet",
+			href: "css/navSignIn.css"
+		});
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
 		NavBar.firebaseSignedIn = false
