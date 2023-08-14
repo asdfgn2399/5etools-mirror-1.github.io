@@ -97,7 +97,7 @@ class NavBar {
 		addElement('script', {
 			src: "https://www.gstatic.com/firebasejs/8.2.4/firebase.js"
 		}).onload = function() {
-			import("../.github/env/env.js").then((env) => {
+			import("../env/env.js").then((env) => {
 				console.log(env)
 				const firebaseConfig = env.environment.firebaseApiKey; 
 				firebase.initializeApp(firebaseConfig);
