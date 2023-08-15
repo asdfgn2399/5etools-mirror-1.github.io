@@ -100,7 +100,7 @@ class NavBar {
 			import("../env/env.js").then((env) => {
 				console.log(env)
 				var vals = env.environment.apiKey.split(',')
-				var keys = ['apiKey', 'authDomain', 'databaseURL', 'projectId', 'storageBucket', 'messagingSenderId', 'appId]
+				var keys = ['apiKey', 'authDomain', 'databaseURL', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
 				var firebaseConfig = {};
 				for (let i = 0; i < keys.length; i++) {
 					firebaseConfig[keys[i]] = vals[i]
