@@ -99,7 +99,12 @@ class NavBar {
 		}).onload = function() {
 			import("../env/env.js").then((env) => {
 				console.log(env)
-				const firebaseConfig = env.environment; 
+				var vals = env.environment.apiKey.split(',')
+				var keys = ['apiKey', 'authDomain', 'databaseURL', 'projectId', 'storageBucket', 'messagingSenderId', 'appId]
+				var firebaseConfig = {};
+				for (let i = 0; i < keys.length; i++) {
+					firebaseConfig[keys[i]] = vals[i]
+				} 
 				firebase.initializeApp(firebaseConfig);
 				NavBar.firebaseDatabase = firebase.database();
 				NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
