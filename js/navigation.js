@@ -99,7 +99,7 @@ class NavBar {
 		}).onload = function() {
 			import("../env/env.js").then((env) => {
 				console.log(env)
-				const firebaseConfig = env.environment.firebaseApiKey; 
+				const firebaseConfig = env.environment; 
 				firebase.initializeApp(firebaseConfig);
 				NavBar.firebaseDatabase = firebase.database();
 				NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
