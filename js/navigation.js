@@ -98,7 +98,6 @@ class NavBar {
 			src: "https://www.gstatic.com/firebasejs/8.2.4/firebase.js"
 		}).onload = function() {
 			import("../env/env.js").then((env) => {
-				console.log(env)
 				var vals = env.environment.apiKey.split(',')
 				var keys = ['apiKey', 'authDomain', 'databaseURL', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
 				var firebaseConfig = {};
