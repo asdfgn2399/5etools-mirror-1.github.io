@@ -1,79 +1,129 @@
 "use strict";
 
 function purgeArraysIntoObjects(obj, undo) {
-	console.log('Function "purgeArraysIntoObjects" has been run!')
-	var rawData;
-	if (undo) {
-		rawData = JSON.stringify(obj) || "{}";
-		rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
-		rawData = rawData.replaceAll('"THISISANOPENINGBRACKET', '[')
-		rawData = rawData.replaceAll('THISISANCLOSINGBRACKET"', ']')
-		rawData = rawData.replaceAll('\\', '')
-		rawData = rawData.replaceAll('COMMENTTHIS', '\\')
-
-		return JSON.parse(rawData); 
-	} else {
-		var arrays = [];
-		var notArrays = [];
-		rawData = JSON.stringify(obj)
-		rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
-		rawData = rawData.replaceAll('\\', 'COMMENTTHIS')
-
-		var arrayStartIndex = 0;
-		var arrayEndIndex = -1;
-		var fromIndex = 0;
-		var endLoop = false;
-		while (!endLoop) {
-			arrayStartIndex = rawData.indexOf('[', fromIndex)
-			console.log(arrayStartIndex)
-			console.log(fromIndex)
-			if (arrayStartIndex == -1) {
-				endLoop = true;
-				notArrays.push(rawData.substring(arrayEndIndex + 1, rawData.length))
-			} else {
-				notArrays.push(rawData.substring(arrayEndIndex + 1, arrayStartIndex))
-				fromIndex = arrayStartIndex + 1;
-				var count = 0;
-				var testIndex = fromIndex;
-				var endSecondLoop = false
-				while (!endSecondLoop) {
-					arrayEndIndex = rawData.indexOf(']', testIndex)
-					testIndex = rawData.indexOf('[', testIndex + 1) == -1 ? rawData.length + 1 : rawData.indexOf('[', testIndex + 1)
-					console.log(arrayEndIndex)
-					console.log(testIndex)
-					if (testIndex > arrayEndIndex && count == 0) {
-						fromIndex = arrayEndIndex + 1;
-						endSecondLoop = true
-					} else if (testIndex > arrayEndIndex) {
-						testIndex = arrayEndIndex + 1;
-						count--
-					} else {
-						count++
-					}
-				}
-				arrays.push(rawData.substring(arrayStartIndex + 1, arrayEndIndex))
-			}
+	var keys = Object.keys(obj)
+	keys.forEach(key => {
+		var val = obj[key]
+		if (undo) {
+			key = key.replaceAll('.', '<$period$>')
+		} else {
+			key = key.replaceAll('<$period$>', '.')
 		}
-		if (notArrays.length == 0) notArrays.push(rawData)
-		console.log(notArrays)
+
+		if (Array.isArray(val) && undo !== true) {
+			val = arrayToObject(val)
+		} else if (typeof val === 'object' && val.isArray === true) {
+			val = objectToArray(val)
+		} 
 		
-		var arrayStrings = [];
-		arrays.forEach(function(array) {
-			var z = JSON.stringify(array);
-			z = z.substring(1, z.length - 1)
-			var a = '"THISISANOPENINGBRACKET' + z + 'THISISANCLOSINGBRACKET"'
-			arrayStrings.push(a)
-		})
-
-		var tempObjString = '';
-		for (var i = 0; i < arrayStrings.length; i++) {
-			tempObjString += notArrays[i];
-			tempObjString += arrayStrings[i]
+		if (typeof val === 'object') {
+			val = purgeArraysIntoObjects(val, undo)
 		}
-		tempObjString += notArrays[notArrays.length - 1]
+		
+		obj[key] = val
+	})
+	
+	console.log(obj)
+	return obj
 
-		return JSON.parse(tempObjString)
+	// Old Method
+	// console.log('Function "purgeArraysIntoObjects" has been run!')
+	// var rawData;
+	// if (undo) {
+	// 	rawData = JSON.stringify(obj) || "{}";
+	// 	rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
+	// 	rawData = rawData.replaceAll('"THISISANOPENINGBRACKET', '[')
+	// 	rawData = rawData.replaceAll('THISISANCLOSINGBRACKET"', ']')
+	// 	rawData = rawData.replaceAll('\\', '')
+	// 	rawData = rawData.replaceAll('COMMENTTHIS', '\\')
+
+	// 	return JSON.parse(rawData); 
+	// } else {
+	// 	var arrays = [];
+	// 	var notArrays = [];
+	// 	rawData = JSON.stringify(obj)
+	// 	rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
+	// 	rawData = rawData.replaceAll('\\', 'COMMENTTHIS')
+
+	// 	var arrayStartIndex = 0;
+	// 	var arrayEndIndex = -1;
+	// 	var fromIndex = 0;
+	// 	var endLoop = false;
+	// 	while (!endLoop) {
+	// 		arrayStartIndex = rawData.indexOf('[', fromIndex)
+	// 		console.log(arrayStartIndex)
+	// 		console.log(fromIndex)
+	// 		if (arrayStartIndex == -1) {
+	// 			endLoop = true;
+	// 			notArrays.push(rawData.substring(arrayEndIndex + 1, rawData.length))
+	// 		} else {
+	// 			notArrays.push(rawData.substring(arrayEndIndex + 1, arrayStartIndex))
+	// 			fromIndex = arrayStartIndex + 1;
+	// 			var count = 0;
+	// 			var testIndex = fromIndex;
+	// 			var endSecondLoop = false
+	// 			while (!endSecondLoop) {
+	// 				arrayEndIndex = rawData.indexOf(']', testIndex)
+	// 				testIndex = rawData.indexOf('[', testIndex + 1) == -1 ? rawData.length + 1 : rawData.indexOf('[', testIndex + 1)
+	// 				console.log(arrayEndIndex)
+	// 				console.log(testIndex)
+	// 				if (testIndex > arrayEndIndex && count == 0) {
+	// 					fromIndex = arrayEndIndex + 1;
+	// 					endSecondLoop = true
+	// 				} else if (testIndex > arrayEndIndex) {
+	// 					testIndex = arrayEndIndex + 1;
+	// 					count--
+	// 				} else {
+	// 					count++
+	// 				}
+	// 			}
+	// 			arrays.push(rawData.substring(arrayStartIndex + 1, arrayEndIndex))
+	// 		}
+	// 	}
+	// 	if (notArrays.length == 0) notArrays.push(rawData)
+	// 	console.log(notArrays)
+		
+	// 	var arrayStrings = [];
+	// 	arrays.forEach(function(array) {
+	// 		var z = JSON.stringify(array);
+	// 		z = z.substring(1, z.length - 1)
+	// 		var a = '"THISISANOPENINGBRACKET' + z + 'THISISANCLOSINGBRACKET"'
+	// 		arrayStrings.push(a)
+	// 	})
+
+	// 	var tempObjString = '';
+	// 	for (var i = 0; i < arrayStrings.length; i++) {
+	// 		tempObjString += notArrays[i];
+	// 		tempObjString += arrayStrings[i]
+	// 	}
+	// 	tempObjString += notArrays[notArrays.length - 1]
+
+	// 	return JSON.parse(tempObjString)
+	// }
+}
+
+function objectToArray(obj) {
+	var newArray = [];
+	delete obj.isArray
+	var keys = Object.keys(obj);
+	for (let i = 0; i < keys.length; i++) {
+		let key = keys[i];
+		if (key.substring(0, 5) == 'index-') {
+			var index = key.substring(5, key.length)
+			newArray[Number(index)] = key
+		} else {
+			newArray[key] = obj[key]
+		}
 	}
+	return newArray
+}
+
+function arrayToObject(array) {
+	var newObj = {isArray: true}
+	for (let i = 0; i < array.length; i++) {
+		newObj['index-' + i] = array[i];
+	}
+	return newObj
 }
 
 function addElement(type, params) {
