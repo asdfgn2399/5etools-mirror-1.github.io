@@ -30,7 +30,7 @@ function purgeArraysIntoObjects(obj, undo) {
 		obj[key] = val
 	})
 	
-	console.log(obj)
+	//console.log(obj)
 	return obj
 
 	// Old Method
@@ -113,7 +113,7 @@ function objectToArray(obj) {
 	var newArray = [];
 	delete obj.isArray
 	var keys = Object.keys(obj);
-	alert(keys)
+	// alert(keys)
 	for (let i = 0; i < keys.length; i++) {
 		let key = keys[i];
 		if (key.substring(0, 6) == 'index-') {
@@ -123,7 +123,7 @@ function objectToArray(obj) {
 			newArray[key] = obj[key]
 		}
 	}
-	console.log(newArray)
+	// console.log(newArray)
 	return newArray
 }
 
@@ -1064,8 +1064,8 @@ NavBar.InteractionManager = class {
 				NavBar.currentSyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.sync, true)
 			})
 			var jsons = [{sync: NavBar.currentSyncStateData, async: NavBar.currentAsyncStateData}]
-			let printWindow = window.open();
-			printWindow.document.write('<html><meta charset="utf-8"/><title>Test</title><div>' + JSON.stringify(jsons) + '</div>');
+			// let printWindow = window.open();
+			// printWindow.document.write('<html><meta charset="utf-8"/><title>Test</title><div>' + JSON.stringify(jsons) + '</div>');
 		} else {
 			var {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
 			DataUtil.doHandleFileLoadErrorsGeneric(errors);
