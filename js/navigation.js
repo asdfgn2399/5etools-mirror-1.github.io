@@ -4,10 +4,17 @@ function purgeArraysIntoObjects(obj, undo) {
 	var keys = Object.keys(obj)
 	keys.forEach(key => {
 		var val = obj[key]
+		var oldKey = key
 		if (undo) {
-			key = key.replaceAll('.', '<$period$>')
+			key = key.replaceAll('<&period&>', '.')
+			if (key !== oldKey) {
+				delete obj[oldKey]
+			}
 		} else {
-			key = key.replaceAll('<$period$>', '.')
+			key = key.replaceAll('.', '<&period&>')
+			if (key !== oldKey) {
+				delete obj[oldKey]
+			}
 		}
 
 		if (Array.isArray(val) && undo !== true) {
@@ -106,15 +113,17 @@ function objectToArray(obj) {
 	var newArray = [];
 	delete obj.isArray
 	var keys = Object.keys(obj);
+	alert(keys)
 	for (let i = 0; i < keys.length; i++) {
 		let key = keys[i];
-		if (key.substring(0, 5) == 'index-') {
-			var index = key.substring(5, key.length)
-			newArray[Number(index)] = key
+		if (key.substring(0, 6) == 'index-') {
+			var index = key.substring(6, key.length)
+			newArray[Number(index)] = obj[key]
 		} else {
 			newArray[key] = obj[key]
 		}
 	}
+	console.log(newArray)
 	return newArray
 }
 
@@ -1051,11 +1060,12 @@ NavBar.InteractionManager = class {
 		if (isLoadedFromFirebase) {
 			await NavBar.usersRef.child(NavBar.userUID + '/5etools').once('value', function (snapshot) {
 				NavBar.currentFirebaseData = snapshot.val()
-				console.log(NavBar.currentFirebaseData)
 				NavBar.currentAsyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.async, true)
 				NavBar.currentSyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.sync, true)
 			})
 			var jsons = [{sync: NavBar.currentSyncStateData, async: NavBar.currentAsyncStateData}]
+			let printWindow = window.open();
+			printWindow.document.write('<html><meta charset="utf-8"/><title>Test</title><div>' + JSON.stringify(jsons) + '</div>');
 		} else {
 			var {jsons, errors} = await DataUtil.pUserUpload({expectedFileTypes: ["5etools"]});
 			DataUtil.doHandleFileLoadErrorsGeneric(errors);
