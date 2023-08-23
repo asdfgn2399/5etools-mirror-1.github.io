@@ -4,9 +4,6 @@ on:
    push:
       tags:
          - 'v**'
-   pull_request:
-       types:
-         - closed
 
    # Allow running manually from the actions tab
    workflow_dispatch:
