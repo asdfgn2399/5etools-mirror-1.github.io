@@ -1,6 +1,8 @@
 "use strict";
 
 function purgeArraysIntoObjects(obj, undo) {
+	if (obj !== null && obj !== undefined) var keys = Object.keys(obj)
+	else return obj
 	var keys = Object.keys(obj)
 	keys.forEach(key => {
 		var val = obj[key]
@@ -19,7 +21,7 @@ function purgeArraysIntoObjects(obj, undo) {
 
 		if (Array.isArray(val) && undo !== true) {
 			val = arrayToObject(val)
-		} else if (typeof val === 'object' && val.isArray === true) {
+		} else if (typeof val === 'object' && val?.isArray === true) {
 			val = objectToArray(val)
 		} 
 		
