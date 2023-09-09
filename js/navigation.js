@@ -32,7 +32,7 @@ function purgeArraysIntoObjects(obj, undo) {
 		obj[key] = val
 	})
 	
-	//console.log(obj)
+	console.log(obj)
 	return obj
 
 	// Old Method
