@@ -9,11 +9,19 @@ function purgeArraysIntoObjects(obj, undo) {
 		var oldKey = key
 		if (undo) {
 			key = key.replaceAll('<&period&>', '.')
+			key = key.replaceAll('<&dollarsign&>', '$')
+			key = key.replaceAll('<&leftbracket&>', '[')
+			key = key.replaceAll('<&rightbracket&>', ']')
+			key = key.replaceAll('<&backslash&>', '/')
 			if (key !== oldKey) {
 				delete obj[oldKey]
 			}
 		} else {
 			key = key.replaceAll('.', '<&period&>')
+			key = key.replaceAll('$', '<&dollarsign&>')
+			key = key.replaceAll('[', '<&leftbracket&>')
+			key = key.replaceAll(']', '<&rightbracket&>')
+			key = key.replaceAll('/', '<&backslash&>')
 			if (key !== oldKey) {
 				delete obj[oldKey]
 			}
@@ -32,83 +40,8 @@ function purgeArraysIntoObjects(obj, undo) {
 		obj[key] = val
 	})
 	
-	console.log(obj)
+	// console.log(obj)
 	return obj
-
-	// Old Method
-	// console.log('Function "purgeArraysIntoObjects" has been run!')
-	// var rawData;
-	// if (undo) {
-	// 	rawData = JSON.stringify(obj) || "{}";
-	// 	rawData = rawData.replaceAll('HTMLPAGEEXTENSION', '.html')
-	// 	rawData = rawData.replaceAll('"THISISANOPENINGBRACKET', '[')
-	// 	rawData = rawData.replaceAll('THISISANCLOSINGBRACKET"', ']')
-	// 	rawData = rawData.replaceAll('\\', '')
-	// 	rawData = rawData.replaceAll('COMMENTTHIS', '\\')
-
-	// 	return JSON.parse(rawData); 
-	// } else {
-	// 	var arrays = [];
-	// 	var notArrays = [];
-	// 	rawData = JSON.stringify(obj)
-	// 	rawData = rawData.replaceAll('.html', 'HTMLPAGEEXTENSION')
-	// 	rawData = rawData.replaceAll('\\', 'COMMENTTHIS')
-
-	// 	var arrayStartIndex = 0;
-	// 	var arrayEndIndex = -1;
-	// 	var fromIndex = 0;
-	// 	var endLoop = false;
-	// 	while (!endLoop) {
-	// 		arrayStartIndex = rawData.indexOf('[', fromIndex)
-	// 		console.log(arrayStartIndex)
-	// 		console.log(fromIndex)
-	// 		if (arrayStartIndex == -1) {
-	// 			endLoop = true;
-	// 			notArrays.push(rawData.substring(arrayEndIndex + 1, rawData.length))
-	// 		} else {
-	// 			notArrays.push(rawData.substring(arrayEndIndex + 1, arrayStartIndex))
-	// 			fromIndex = arrayStartIndex + 1;
-	// 			var count = 0;
-	// 			var testIndex = fromIndex;
-	// 			var endSecondLoop = false
-	// 			while (!endSecondLoop) {
-	// 				arrayEndIndex = rawData.indexOf(']', testIndex)
-	// 				testIndex = rawData.indexOf('[', testIndex + 1) == -1 ? rawData.length + 1 : rawData.indexOf('[', testIndex + 1)
-	// 				console.log(arrayEndIndex)
-	// 				console.log(testIndex)
-	// 				if (testIndex > arrayEndIndex && count == 0) {
-	// 					fromIndex = arrayEndIndex + 1;
-	// 					endSecondLoop = true
-	// 				} else if (testIndex > arrayEndIndex) {
-	// 					testIndex = arrayEndIndex + 1;
-	// 					count--
-	// 				} else {
-	// 					count++
-	// 				}
-	// 			}
-	// 			arrays.push(rawData.substring(arrayStartIndex + 1, arrayEndIndex))
-	// 		}
-	// 	}
-	// 	if (notArrays.length == 0) notArrays.push(rawData)
-	// 	console.log(notArrays)
-		
-	// 	var arrayStrings = [];
-	// 	arrays.forEach(function(array) {
-	// 		var z = JSON.stringify(array);
-	// 		z = z.substring(1, z.length - 1)
-	// 		var a = '"THISISANOPENINGBRACKET' + z + 'THISISANCLOSINGBRACKET"'
-	// 		arrayStrings.push(a)
-	// 	})
-
-	// 	var tempObjString = '';
-	// 	for (var i = 0; i < arrayStrings.length; i++) {
-	// 		tempObjString += notArrays[i];
-	// 		tempObjString += arrayStrings[i]
-	// 	}
-	// 	tempObjString += notArrays[notArrays.length - 1]
-
-	// 	return JSON.parse(tempObjString)
-	// }
 }
 
 function objectToArray(obj) {
@@ -309,8 +242,10 @@ class NavBar {
 			},
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_dropdown(NavBar._CAT_SETTINGS, NavBar._CAT_ACCOUNT, {isSide: true});
+		this._addElement_label(NavBar._CAT_ACCOUNT, `<p>WARNING: Account System is under development. Expect bugs. Contact asdfgn2399 on discord for support.</p>`);
 		this._addElement_button(
-			NavBar._CAT_SETTINGS,
+			NavBar._CAT_ACCOUNT,
 			{
 				html: NavBar.firebaseSignedIn ? 'Log Out' : 'Sign In',
 				id: "signInButton",
@@ -332,7 +267,7 @@ class NavBar {
 			}
 		);
 		this._addElement_button(
-			NavBar._CAT_SETTINGS,
+			NavBar._CAT_ACCOUNT,
 			{
 				html: "Create Account",
 				click: async () => {
@@ -343,9 +278,9 @@ class NavBar {
 				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
 			}
 		);
-		this._addElement_divider(NavBar._CAT_SETTINGS);
+		this._addElement_divider(NavBar._CAT_ACCOUNT);
 		this._addElement_button(
-			NavBar._CAT_SETTINGS,
+			NavBar._CAT_ACCOUNT,
 			{
 				html: "Save State to Account",
 				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
@@ -353,7 +288,7 @@ class NavBar {
 			},
 		);
 		this._addElement_button(
-			NavBar._CAT_SETTINGS,
+			NavBar._CAT_ACCOUNT,
 			{
 				html: "Load Saved State from Account",
 				click: async (evt) => {
@@ -984,7 +919,11 @@ class NavBar {
 					document.getElementById('navPopup').style.top = '-500px';
 					NavBar.firebaseSignedIn = true
 					NavBar.userUID = userObj.user.uid
-					console.log(NavBar.userUID)
+					// console.log(NavBar.userUID)
+					JqueryUtil.doToast({
+						content: `Successfully logged in as '${email}'!`,
+						type: "success",
+					})
 				}
 			})
 		} else {
@@ -996,7 +935,11 @@ class NavBar {
 					NavBar.firebaseSignedIn = true
 					NavBar.userUID = userObj.user.uid
 					NavBar.usersRef.child(NavBar.userUID + '/5etools').set({siteVersion: VERSION_NUMBER})
-					console.log(NavBar.userUID)
+					// console.log(NavBar.userUID)
+					JqueryUtil.doToast({
+						content: `Successfully created account with '${email}'!`,
+						type: "success",
+					})
 				}
 			})
 		}
@@ -1016,6 +959,7 @@ NavBar._CAT_ADVENTURES = "Adventures";
 NavBar._CAT_REFERENCES = "References";
 NavBar._CAT_UTILITIES = "Utilities";
 NavBar._CAT_SETTINGS = "Settings";
+NavBar._CAT_ACCOUNT = "Account";
 NavBar._CAT_CACHE = "Preload Data";
 
 NavBar._navbar = null;
@@ -1051,6 +995,11 @@ NavBar.InteractionManager = class {
 		const dump = {sync, async};
 		if (toFirebase) {
 			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
+			document.getElementById('navPopup').click();
+			JqueryUtil.doToast({
+				content: `Successfully saved state!`,
+				type: "success",
+			})
 		} else {
 			DataUtil.userDownload("5etools", dump, {fileType: "5etools"});
 		}
