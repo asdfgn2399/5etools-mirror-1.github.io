@@ -101,6 +101,7 @@ class NavBar {
 				firebase.initializeApp(firebaseConfig);
 				NavBar.firebaseDatabase = firebase.database();
 				NavBar.usersRef = NavBar.firebaseDatabase.ref('users');
+				NavBar.userDataRef = NavBar.firebaseDatabase.ref('userData');
 			})
 		};
 		addElement('link', {
@@ -109,7 +110,6 @@ class NavBar {
 		});
 		NavBar._initElements();
 		NavBar.highlightCurrentPage();
-		NavBar.firebaseSignedIn = false
 	}
 
 	static _onLoad () {
@@ -243,14 +243,14 @@ class NavBar {
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
 		this._addElement_dropdown(NavBar._CAT_SETTINGS, NavBar._CAT_ACCOUNT, {isSide: true});
-		this._addElement_label(NavBar._CAT_ACCOUNT, `<p>WARNING: Account System is under development. Expect bugs. Contact asdfgn2399 on discord for support.</p>`);
+		this._addElement_label(NavBar._CAT_ACCOUNT, `<p>WARNING: Account System is under development. Expect bugs. Keep a backup of your saved state.</p><p>Contact asdfgn2399 on discord for support.</p>`);
 		this._addElement_button(
 			NavBar._CAT_ACCOUNT,
 			{
-				html: NavBar.firebaseSignedIn ? 'Log Out' : 'Sign In',
+				html: localStorage.userUID !== 'undefined' ? 'Log Out' : 'Sign In',
 				id: "signInButton",
 				click: async () => {
-					if (NavBar.firebaseSignedIn == false) {
+					if (localStorage.userUID == 'undefined') {
 						document.getElementById('navPopup').innerHTML = NavBar.initPopup('signIn');
 						document.getElementById('navPopup').style.top = '175%'
 						document.getElementById('navPopup').click();
@@ -258,12 +258,15 @@ class NavBar {
 						firebase.auth().signOut().then(() => {
 							signInButton.innerHTML = 'Sign In';
 							signInButton.title = 'Sign in to your account';
-							NavBar.firebaseSignedIn = false
-							NavBar.userUID = '';
+							JqueryUtil.doToast({
+								content: `Successfully signed out '${NavBar.usersRef.child(localStorage.userUID).get(email)}'`,
+								type: 'success'
+							})
+							localStorage.userUID = undefined;
 						})
 					}
 				},
-				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
+				title: localStorage.userUID !== 'undefined' ? "Log out of your account" : "Sign in to your account",
 			}
 		);
 		this._addElement_button(
@@ -275,7 +278,7 @@ class NavBar {
 					document.getElementById('navPopup').style.top = '175%'
 					document.getElementById('navPopup').click();
 				},
-				title: NavBar.firebaseSignedIn ? "Log out of your account" : "Sign in to your account",
+				title: "Create an account",
 			}
 		);
 		this._addElement_divider(NavBar._CAT_ACCOUNT);
@@ -283,7 +286,16 @@ class NavBar {
 			NavBar._CAT_ACCOUNT,
 			{
 				html: "Save State to Account",
-				click: async (evt) => NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true),
+				click: async (evt) => {
+					if (localStorage.userUID !== 'undefined') {
+						NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true)
+					} else {
+						JqueryUtil.doToast({
+							content: `You are not signed in! Please sign in and try again`,
+							type: "warning",
+						})
+					}
+				},
 				title: "Save any locally-stored data (loaded homebrew, active blocklists, DM Screen configuration,...) to your account",
 			},
 		);
@@ -292,8 +304,13 @@ class NavBar {
 			{
 				html: "Load Saved State from Account",
 				click: async (evt) => {
-					if (NavBar.userUID !== '') {
+					if (localStorage.userUID !== 'undefined') {
 						NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
+					} else {
+						JqueryUtil.doToast({
+							content: `You are not signed in! Please sign in and try again`,
+							type: "warning",
+						})
 					}
 				},
 				title: "Load previously-saved data (loaded homebrew, active blocklists, DM Screen configuration,...) from your account",
@@ -917,9 +934,8 @@ class NavBar {
 					signInButton.innerHTML = 'Log Out';
 					signInButton.title = 'Log out of your account';
 					document.getElementById('navPopup').style.top = '-500px';
-					NavBar.firebaseSignedIn = true
-					NavBar.userUID = userObj.user.uid
-					// console.log(NavBar.userUID)
+					localStorage.userUID = userObj.user.uid
+					// console.log(localStorage.userUID)
 					JqueryUtil.doToast({
 						content: `Successfully logged in as '${email}'!`,
 						type: "success",
@@ -932,10 +948,16 @@ class NavBar {
 					signInButton.innerHTML = 'Log Out';
 					signInButton.title = 'Log out of your account';
 					document.getElementById('navPopup').style.top = '-500px';
-					NavBar.firebaseSignedIn = true
-					NavBar.userUID = userObj.user.uid
-					NavBar.usersRef.child(NavBar.userUID + '/5etools').set({siteVersion: VERSION_NUMBER})
-					// console.log(NavBar.userUID)
+					localStorage.userUID = userObj.user.uid
+					var newUserData = {}
+					newUserData[localStorage.userUID] = {}
+					var userRef = newUserData[localStorage.userUID]
+					userRef['5etools'] = {siteVersion: VERSION_NUMBER, timestamp: Date.now()}
+					NavBar.userDataRef.set(userRef)
+					var newUser = {}
+					newUser[localStorage.userUID] = {email: email, signUpDate: Date.now()}
+					NavBar.usersRef.set(newUser)
+					// console.log(localStorage.userUID)
 					JqueryUtil.doToast({
 						content: `Successfully created account with '${email}'!`,
 						type: "success",
@@ -994,7 +1016,7 @@ NavBar.InteractionManager = class {
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
 		if (toFirebase) {
-			NavBar.usersRef.child(NavBar.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
+			NavBar.userDataRef.child(localStorage.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
 			document.getElementById('navPopup').click();
 			JqueryUtil.doToast({
 				content: `Successfully saved state!`,
@@ -1009,7 +1031,7 @@ NavBar.InteractionManager = class {
 		evt.preventDefault();
 		
 		if (isLoadedFromFirebase) {
-			await NavBar.usersRef.child(NavBar.userUID + '/5etools').once('value', function (snapshot) {
+			await NavBar.userDataRef.child(localStorage.userUID + '/5etools').once('value', function (snapshot) {
 				NavBar.currentFirebaseData = snapshot.val()
 				NavBar.currentAsyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.async, true)
 				NavBar.currentSyncStateData = purgeArraysIntoObjects(NavBar.currentFirebaseData.sync, true)
