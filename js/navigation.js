@@ -247,10 +247,10 @@ class NavBar {
 		this._addElement_button(
 			NavBar._CAT_ACCOUNT,
 			{
-				html: localStorage.userUID !== 'undefined' ? 'Log Out' : 'Sign In',
+				html: localStorage.userUID !== 'loggedOut' ? 'Log Out' : 'Sign In',
 				id: "signInButton",
 				click: async () => {
-					if (localStorage.userUID == 'undefined') {
+					if (localStorage.userUID == 'loggedOut') {
 						document.getElementById('navPopup').innerHTML = NavBar.initPopup('signIn');
 						document.getElementById('navPopup').style.top = '175%'
 						document.getElementById('navPopup').click();
@@ -258,15 +258,17 @@ class NavBar {
 						firebase.auth().signOut().then(() => {
 							signInButton.innerHTML = 'Sign In';
 							signInButton.title = 'Sign in to your account';
-							JqueryUtil.doToast({
-								content: `Successfully signed out '${NavBar.usersRef.child(localStorage.userUID).get(email)}'`,
-								type: 'success'
-							})
-							localStorage.userUID = undefined;
+							if (localStorage.userUID) {
+								JqueryUtil.doToast({
+									content: `Successfully signed out '${NavBar.usersRef.child(localStorage.userUID).get(email)}'`,
+									type: 'success'
+								})
+							}
+							localStorage.userUID = 'loggedOut';
 						})
 					}
 				},
-				title: localStorage.userUID !== 'undefined' ? "Log out of your account" : "Sign in to your account",
+				title: localStorage.userUID !== 'loggedOut' ? "Log out of your account" : "Sign in to your account",
 			}
 		);
 		this._addElement_button(
@@ -287,7 +289,7 @@ class NavBar {
 			{
 				html: "Save State to Account",
 				click: async (evt) => {
-					if (localStorage.userUID !== 'undefined') {
+					if (localStorage.userUID !== 'loggedOut') {
 						NavBar.InteractionManager._pOnClick_button_saveStateFile(evt, true)
 					} else {
 						JqueryUtil.doToast({
@@ -304,7 +306,7 @@ class NavBar {
 			{
 				html: "Load Saved State from Account",
 				click: async (evt) => {
-					if (localStorage.userUID !== 'undefined') {
+					if (localStorage.userUID !== 'loggedOut') {
 						NavBar.InteractionManager._pOnClick_button_loadStateFile(evt, true)
 					} else {
 						JqueryUtil.doToast({
