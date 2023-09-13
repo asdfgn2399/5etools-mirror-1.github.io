@@ -255,15 +255,18 @@ class NavBar {
 						document.getElementById('navPopup').style.top = '175%'
 						document.getElementById('navPopup').click();
 					} else {
+						if (localStorage.userUID) {
+							NavBar.usersRef.child(localStorage.userUID).once('value', (snap) => {
+								var data = snap.val()
+								JqueryUtil.doToast({
+									content: `Successfully signed out '${data.email}'`,
+									type: 'success'
+								})
+							});
+						};
 						firebase.auth().signOut().then(() => {
 							signInButton.innerHTML = 'Sign In';
 							signInButton.title = 'Sign in to your account';
-							if (localStorage.userUID) {
-								JqueryUtil.doToast({
-									content: `Successfully signed out '${NavBar.usersRef.child(localStorage.userUID).get(email)}'`,
-									type: 'success'
-								})
-							}
 							localStorage.userUID = 'loggedOut';
 						})
 					}
