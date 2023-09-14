@@ -268,6 +268,7 @@ class NavBar {
 							signInButton.innerHTML = 'Sign In';
 							signInButton.title = 'Sign in to your account';
 							localStorage.userUID = 'loggedOut';
+							document.getElementById('navigation').click();
 						})
 					}
 				},
@@ -1021,7 +1022,8 @@ NavBar.InteractionManager = class {
 		const async = await StorageUtil.pGetDump();
 		const dump = {sync, async};
 		if (toFirebase) {
-			NavBar.userDataRef.child(localStorage.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: purgeArraysIntoObjects(async, false), siteVersion: VERSION_NUMBER, timestamp: Date.now()})
+			var asyncData = JSON.parse(JSON.stringify(purgeArraysIntoObjects(async, false)))
+			NavBar.userDataRef.child(localStorage.userUID + '/5etools').set({sync: purgeArraysIntoObjects(sync, false), async: asyncData, siteVersion: VERSION_NUMBER, timestamp: Date.now()})
 			document.getElementById('navPopup').click();
 			JqueryUtil.doToast({
 				content: `Successfully saved state!`,
