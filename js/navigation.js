@@ -947,6 +947,33 @@ class NavBar {
 						type: "success",
 					})
 				}
+			}).catch((error) => {
+				if (error.code == "auth/user-not-found") {
+					JqueryUtil.doToast({
+						content: `No user found with this email! Please check your spelling and try again.`,
+						type: "danger",
+						autoHideTime: 5_000 /* 5 seconds */,
+					})
+				} else if (error.code == "auth/wrong-password") {
+					JqueryUtil.doToast({
+						content: `Incorrect password for '${email}'! Please check your spelling and try again.`,
+						type: "danger",
+						autoHideTime: 5_000 /* 5 seconds */,
+					})
+				} else if (error.code == "auth/invalid-email") {
+					JqueryUtil.doToast({
+						content: `Please enter a valid email address and try again.`,
+						type: "danger",
+						autoHideTime: 5_000 /* 5 seconds */,
+					})
+				} else {
+					console.error(error)
+					JqueryUtil.doToast({
+						content: `An error has occured! Check the console (Ctrl + Shift + J) for more information`,
+						type: "danger",
+						autoHideTime: 5_000 /* 5 seconds */,
+					})
+				}
 			})
 		} else {
 			firebase.auth().createUserWithEmailAndPassword(email, password).then((userObj) => {
@@ -955,14 +982,10 @@ class NavBar {
 					signInButton.title = 'Log out of your account';
 					document.getElementById('navPopup').style.top = '-500px';
 					localStorage.userUID = userObj.user.uid
-					var newUserData = {}
-					newUserData[localStorage.userUID] = {}
-					var userRef = newUserData[localStorage.userUID]
-					userRef['5etools'] = {siteVersion: VERSION_NUMBER, timestamp: Date.now()}
-					NavBar.userDataRef.set(userRef)
-					var newUser = {}
-					newUser[localStorage.userUID] = {email: email, signUpDate: Date.now()}
-					NavBar.usersRef.set(newUser)
+					var newUserData = {}; 
+					newUserData['5etools'] = {siteVersion: VERSION_NUMBER, timestamp: Date.now()}
+					NavBar.userDataRef.child(localStorage.userUID).set(newUserData)
+					NavBar.usersRef.child(localStorage.userUID).set({email: email, signUpDate: Date.now()})
 					// console.log(localStorage.userUID)
 					JqueryUtil.doToast({
 						content: `Successfully created account with '${email}'!`,
