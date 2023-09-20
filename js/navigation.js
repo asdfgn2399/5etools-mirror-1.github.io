@@ -243,7 +243,7 @@ class NavBar {
 		);
 		this._addElement_divider(NavBar._CAT_SETTINGS);
 		this._addElement_dropdown(NavBar._CAT_SETTINGS, NavBar._CAT_ACCOUNT, {isSide: true});
-		this._addElement_label(NavBar._CAT_ACCOUNT, `<p>WARNING: Account System is under development. Expect bugs. Keep a backup of your saved state.</p><p>Contact asdfgn2399 on discord for support.</p>`);
+		this._addElement_label(NavBar._CAT_ACCOUNT, `<p>WARNING: Account System is under development. Expect bugs. <b>Keep a backup of your saved state.</b></p><p>Contact asdfgn2399 on discord for support.</p>`);
 		this._addElement_button(
 			NavBar._CAT_ACCOUNT,
 			{
@@ -256,12 +256,9 @@ class NavBar {
 						document.getElementById('navPopup').click();
 					} else {
 						if (localStorage.userUID) {
+							var data = ""
 							NavBar.usersRef.child(localStorage.userUID).once('value', (snap) => {
-								var data = snap.val()
-								JqueryUtil.doToast({
-									content: `Successfully signed out '${data.email}'`,
-									type: 'success'
-								})
+								data = snap.val()
 							});
 						};
 						firebase.auth().signOut().then(() => {
@@ -269,6 +266,19 @@ class NavBar {
 							signInButton.title = 'Sign in to your account';
 							localStorage.userUID = 'loggedOut';
 							document.getElementById('navigation').click();
+							if (data != "") {
+								JqueryUtil.doToast({
+									content: `Successfully signed out '${data.email}'`,
+									type: 'success'
+								})
+							}
+						}).catch((error) => {
+							console.error(error)
+							JqueryUtil.doToast({
+								content: `An error has occured! Check the console (Ctrl + Shift + J) for more information`,
+								type: "danger",
+								autoHideTime: 5_000 /* 5 seconds */,
+							})
 						})
 					}
 				},
