@@ -1602,16 +1602,25 @@ Parser.getFullImmRes = function (toParse) {
 	return out;
 };
 
-Parser.getFullCondImm = function (condImm, isPlainText) {
+Parser.getFullCondImm = function (condImm, {isPlainText = false, isEntry = false} = {}) {
+	if (isPlainText && isEntry) throw new Error(`Options "isPlainText" and "isEntry" are mutually exclusive!`);
+
 	if (!condImm?.length) return "";
-	function render (condition) {
-		return isPlainText ? condition : Renderer.get().render(`{@condition ${condition}}`);
-	}
-	return condImm.map(it => {
-		if (it.special) return it.special;
-		if (it.conditionImmune) return `${it.preNote ? `${it.preNote} ` : ""}${it.conditionImmune.map(render).join(", ")}${it.note ? ` ${it.note}` : ""}`;
-		return render(it);
-	}).sort(SortUtil.ascSortLower).join(", ");
+
+	const render = condition => {
+		if (isPlainText) return condition;
+		const ent = `{@condition ${condition}}`;
+		if (isEntry) return ent;
+		return Renderer.get().render(ent);
+	};
+
+	return condImm
+		.map(it => {
+			if (it.special) return it.special;
+			if (it.conditionImmune) return `${it.preNote ? `${it.preNote} ` : ""}${it.conditionImmune.map(render).join(", ")}${it.note ? ` ${it.note}` : ""}`;
+			return render(it);
+		})
+		.sort(SortUtil.ascSortLower).join(", ");
 };
 
 Parser.MON_SENSE_TAG_TO_FULL = {
@@ -2479,6 +2488,7 @@ Parser.CONDITION_TO_COLOR = {
 
 Parser.RULE_TYPE_TO_FULL = {
 	"O": "Optional",
+	"P": "Prerelease",
 	"V": "Variant",
 	"VO": "Variant Optional",
 	"VV": "Variant Variant",
@@ -2635,6 +2645,7 @@ Parser.SRC_HAT_TG = "HAT-TG";
 Parser.SRC_HAT_LMI = "HAT-LMI";
 Parser.SRC_GotSF = "GotSF";
 Parser.SRC_LK = "LK";
+Parser.SRC_CoA = "CoA";
 
 Parser.SRC_AL_PREFIX = "AL";
 
@@ -2873,6 +2884,7 @@ Parser.SOURCE_JSON_TO_FULL[Parser.SRC_HAT_TG] = "Honor Among Thieves: Thieves' G
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_HAT_LMI] = "Honor Among Thieves: Legendary Magic Items";
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_GotSF] = "Giants of the Star Forge";
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_LK] = "Lightning Keep";
+Parser.SOURCE_JSON_TO_FULL[Parser.SRC_CoA] = "Chains of Asmodeus";
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_ALCoS] = `${Parser.AL_PREFIX}Curse of Strahd`;
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_ALEE] = `${Parser.AL_PREFIX}Elemental Evil`;
 Parser.SOURCE_JSON_TO_FULL[Parser.SRC_ALRoD] = `${Parser.AL_PREFIX}Rage of Demons`;
@@ -3086,6 +3098,7 @@ Parser.SOURCE_JSON_TO_ABV[Parser.SRC_HAT_TG] = "HAT-TG";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_HAT_LMI] = "HAT-LMI";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_GotSF] = "GotSF";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_LK] = "LK";
+Parser.SOURCE_JSON_TO_ABV[Parser.SRC_CoA] = "CoA";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_ALCoS] = "ALCoS";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_ALEE] = "ALEE";
 Parser.SOURCE_JSON_TO_ABV[Parser.SRC_ALRoD] = "ALRoD";
@@ -3298,6 +3311,7 @@ Parser.SOURCE_JSON_TO_DATE[Parser.SRC_HAT_TG] = "2023-03-06";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_HAT_LMI] = "2023-03-31";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_GotSF] = "2023-08-01";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_LK] = "2023-09-26";
+Parser.SOURCE_JSON_TO_DATE[Parser.SRC_CoA] = "2023-10-30";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_ALCoS] = "2016-03-15";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_ALEE] = "2015-04-07";
 Parser.SOURCE_JSON_TO_DATE[Parser.SRC_ALRoD] = "2015-09-15";
@@ -3465,6 +3479,7 @@ Parser.SOURCES_ADVENTURES = new Set([
 	Parser.SRC_GotSF,
 	Parser.SRC_PaBTSO,
 	Parser.SRC_LK,
+	Parser.SRC_CoA,
 
 	Parser.SRC_AWM,
 ]);
@@ -3509,6 +3524,7 @@ Parser.SOURCES_NON_STANDARD_WOTC = new Set([
 	Parser.SRC_MisMV1,
 	Parser.SRC_LK,
 	Parser.SRC_AATM,
+	Parser.SRC_CoA,
 ]);
 Parser.SOURCES_PARTNERED_WOTC = new Set([
 	Parser.SRC_RMBRE,
@@ -3546,6 +3562,7 @@ Parser.SOURCES_VANILLA = new Set([
 	Parser.SRC_VD,
 	Parser.SRC_GotSF,
 	Parser.SRC_BGG,
+	Parser.SRC_CoA,
 ]);
 
 // Any opinionated set of sources that are """hilarious, dude"""
@@ -3723,6 +3740,7 @@ Parser.SOURCES_AVAILABLE_DOCS_ADVENTURE = {};
 	Parser.SRC_PaBTSO,
 	Parser.SRC_ToFW,
 	Parser.SRC_LK,
+	Parser.SRC_CoA,
 ].forEach(src => {
 	Parser.SOURCES_AVAILABLE_DOCS_ADVENTURE[src] = src;
 	Parser.SOURCES_AVAILABLE_DOCS_ADVENTURE[src.toLowerCase()] = src;
