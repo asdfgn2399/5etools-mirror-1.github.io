@@ -88,6 +88,7 @@ class NavBar {
 	}
 
 	static _onDomContentLoaded () {
+		if (Date.now() > Number(localStorage.UIDtimestamp) + 3600000) localStorage.userUID = 'loggedOut';
 		addElement('script', {
 			src: "https://www.gstatic.com/firebasejs/8.2.4/firebase.js"
 		}).onload = function() {
@@ -951,7 +952,7 @@ class NavBar {
 					signInButton.title = 'Log out of your account';
 					document.getElementById('navPopup').style.top = '-500px';
 					localStorage.userUID = userObj.user.uid
-					// console.log(localStorage.userUID)
+					localStorage.UIDtimestamp = Date.now()
 					JqueryUtil.doToast({
 						content: `Successfully logged in as '${email}'!`,
 						type: "success",
@@ -992,6 +993,7 @@ class NavBar {
 					signInButton.title = 'Log out of your account';
 					document.getElementById('navPopup').style.top = '-500px';
 					localStorage.userUID = userObj.user.uid
+					localStorage.UIDtimestamp = Date.now()
 					var newUserData = {}; 
 					newUserData['5etools'] = {siteVersion: VERSION_NUMBER, timestamp: Date.now()}
 					NavBar.userDataRef.child(localStorage.userUID).set(newUserData)
