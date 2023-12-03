@@ -148,6 +148,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -3052,6 +3055,9 @@
 				},
 				{
 					"source": "GotSF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -4003,6 +4009,9 @@
 				},
 				{
 					"source": "GotSF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -7704,6 +7713,9 @@
 				},
 				{
 					"source": "KftGV"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -8334,6 +8346,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -9633,6 +9648,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -9806,6 +9824,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -9966,6 +9987,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -10334,6 +10358,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -10735,6 +10762,9 @@
 				},
 				{
 					"source": "IDRotF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -10925,6 +10955,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -11093,6 +11126,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -11605,6 +11641,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -12193,6 +12232,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -13203,6 +13245,9 @@
 			"otherSources": [
 				{
 					"source": "DSotDQ"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -13810,6 +13855,9 @@
 				},
 				{
 					"source": "WBtW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -14873,6 +14921,9 @@
 				},
 				{
 					"source": "IDRotF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -15341,6 +15392,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -15964,6 +16018,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -16680,6 +16737,12 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
+				},
+				{
+					"source": "HFStCM"
 				}
 			],
 			"size": [
@@ -17078,6 +17141,9 @@
 				},
 				{
 					"source": "PSX"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -17383,6 +17449,9 @@
 				},
 				{
 					"source": "KftGV"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -17664,6 +17733,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -17899,6 +17971,9 @@
 				},
 				{
 					"source": "AATM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -18656,6 +18731,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -19118,6 +19196,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -19857,6 +19938,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -20161,6 +20245,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -20575,6 +20662,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -20952,6 +21042,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -21353,6 +21446,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -22373,6 +22469,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -22555,6 +22654,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -23864,6 +23966,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -24338,6 +24443,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -25432,6 +25540,9 @@
 				},
 				{
 					"source": "WBtW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -25792,6 +25903,9 @@
 				},
 				{
 					"source": "PSI"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -25951,6 +26065,12 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
+				},
+				{
+					"source": "HFStCM"
 				}
 			],
 			"size": [
@@ -26653,6 +26773,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -26913,6 +27036,9 @@
 				},
 				{
 					"source": "KftGV"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -27578,6 +27704,9 @@
 				},
 				{
 					"source": "JttRC"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -27830,6 +27959,9 @@
 				},
 				{
 					"source": "WBtW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -28171,6 +28303,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -28398,6 +28533,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -28790,6 +28928,9 @@
 				},
 				{
 					"source": "PSI"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -30236,6 +30377,9 @@
 				},
 				{
 					"source": "EGW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -30981,6 +31125,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -31666,6 +31813,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -31786,6 +31936,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -31921,6 +32074,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -32313,6 +32469,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -32707,6 +32866,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -32833,6 +32995,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -32965,6 +33130,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -33271,6 +33439,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -33548,6 +33719,11 @@
 			"source": "MM",
 			"page": 115,
 			"srd": true,
+			"otherSources": [
+				{
+					"source": "BMT"
+				}
+			],
 			"size": [
 				"M"
 			],
@@ -33792,6 +33968,9 @@
 				},
 				{
 					"source": "LoX"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -34254,6 +34433,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -34699,6 +34881,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -35010,6 +35195,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -35237,6 +35425,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -36029,6 +36220,9 @@
 				},
 				{
 					"source": "AATM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -36738,6 +36932,9 @@
 				},
 				{
 					"source": "DoSI"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -36978,6 +37175,12 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
+				},
+				{
+					"source": "HFStCM"
 				}
 			],
 			"size": [
@@ -37128,6 +37331,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -37282,6 +37488,9 @@
 				},
 				{
 					"source": "CRCotN"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -38168,6 +38377,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -38840,6 +39052,9 @@
 				},
 				{
 					"source": "CM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -39334,6 +39549,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -40020,6 +40238,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -40712,6 +40933,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -41004,6 +41228,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -42205,6 +42432,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -43413,6 +43643,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -44011,6 +44244,9 @@
 				},
 				{
 					"source": "PSI"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -44142,6 +44378,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -44282,6 +44521,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -44770,6 +45012,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -45505,6 +45750,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -45670,6 +45918,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -46774,6 +47025,9 @@
 				},
 				{
 					"source": "AATM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -47206,6 +47460,9 @@
 				},
 				{
 					"source": "KftGV"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -47533,6 +47790,9 @@
 				},
 				{
 					"source": "DoSI"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -47634,6 +47894,9 @@
 				},
 				{
 					"source": "CM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -47954,6 +48217,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -48300,6 +48566,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -48476,6 +48745,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -48611,6 +48883,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -48995,6 +49270,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -50663,6 +50941,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -50886,6 +51167,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -51287,6 +51571,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -51765,6 +52052,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -52683,6 +52973,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -54227,6 +54520,9 @@
 				},
 				{
 					"source": "IDRotF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -54609,6 +54905,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -54879,6 +55178,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -55015,6 +55317,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -55523,6 +55828,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -56537,6 +56845,9 @@
 				},
 				{
 					"source": "GotSF"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -56693,6 +57004,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -57665,6 +57979,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -57834,6 +58151,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -58012,6 +58332,12 @@
 				},
 				{
 					"source": "PSI"
+				},
+				{
+					"source": "BMT"
+				},
+				{
+					"source": "HFStCM"
 				}
 			],
 			"size": [
@@ -58170,6 +58496,9 @@
 				},
 				{
 					"source": "PaBTSO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -58674,6 +59003,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -59062,6 +59394,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -59558,6 +59893,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -60186,6 +60524,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -60368,6 +60709,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -60999,6 +61343,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -61372,6 +61719,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -62527,6 +62877,9 @@
 				},
 				{
 					"source": "MOT"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -62769,6 +63122,9 @@
 				},
 				{
 					"source": "LoX"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -63273,6 +63629,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -63555,6 +63914,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -63902,6 +64264,9 @@
 				},
 				{
 					"source": "KftGV"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -64059,6 +64424,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -65001,6 +65369,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -65384,6 +65755,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -66374,6 +66748,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -66502,6 +66879,9 @@
 				},
 				{
 					"source": "DIP"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -66750,6 +67130,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -66934,6 +67317,9 @@
 				},
 				{
 					"source": "WBtW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -67265,6 +67651,9 @@
 				},
 				{
 					"source": "DSotDQ"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -67942,6 +68331,9 @@
 				},
 				{
 					"source": "CM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -68135,6 +68527,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -68510,6 +68905,9 @@
 				},
 				{
 					"source": "CM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -68926,6 +69324,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -69127,6 +69528,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -69586,6 +69990,9 @@
 				},
 				{
 					"source": "LK"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -69696,6 +70103,9 @@
 				},
 				{
 					"source": "CM"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -69864,6 +70274,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -70029,6 +70442,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -72116,6 +72532,9 @@
 				},
 				{
 					"source": "LK"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -72371,6 +72790,9 @@
 				},
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -73171,6 +73593,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [
@@ -74460,6 +74885,9 @@
 				},
 				{
 					"source": "ToFW"
+				},
+				{
+					"source": "BMT"
 				}
 			],
 			"size": [

@@ -482,6 +482,10 @@ PropOrder._SPELL_LIST = [
 	"source",
 
 	"spellListType",
+
+	"className",
+	"classSource",
+
 	"spells",
 ];
 PropOrder._ACTION = [
@@ -1089,6 +1093,7 @@ PropOrder._FEAT = [
 	"additionalSources",
 	"otherSources",
 
+	"category",
 	"prerequisite",
 
 	"repeatable",
@@ -1125,6 +1130,15 @@ PropOrder._FEAT = [
 	"foundryFlags",
 	"foundryEffects",
 	"foundryImg",
+];
+PropOrder._FOUNDRY_FEAT = [
+	"name",
+	"source",
+
+	"system",
+	"effects",
+	"flags",
+	"img",
 ];
 PropOrder._VEHICLE = [
 	"name",
@@ -1318,6 +1332,7 @@ PropOrder._ITEM = [
 
 	"ability",
 	"grantsProficiency",
+	"grantsLanguage",
 
 	"bonusWeapon",
 	"bonusWeaponAttack",
@@ -1738,6 +1753,11 @@ PropOrder._TRAP = [
 	"countermeasures",
 
 	"entries",
+
+	"hasFluff",
+	"hasFluffImages",
+
+	"fluff",
 ];
 PropOrder._HAZARD = [
 	"name",
@@ -1753,6 +1773,11 @@ PropOrder._HAZARD = [
 	"trapHazType",
 
 	"entries",
+
+	"hasFluff",
+	"hasFluffImages",
+
+	"fluff",
 ];
 PropOrder._RECIPE = [
 	"name",
@@ -1760,6 +1785,8 @@ PropOrder._RECIPE = [
 
 	"source",
 	"page",
+
+	"otherSources",
 
 	"type",
 	"dishTypes",
@@ -1924,6 +1951,8 @@ PropOrder._PROP_TO_LIST = {
 	"objectFluff": PropOrder._GENERIC_FLUFF,
 	"raceFluff": PropOrder._RACE_FLUFF,
 	"rewardFluff": PropOrder._GENERIC_FLUFF,
+	"trapFluff": PropOrder._GENERIC_FLUFF,
+	"hazardFluff": PropOrder._GENERIC_FLUFF,
 	"spell": PropOrder._SPELL,
 	"roll20Spell": PropOrder._ROLL20_SPELL,
 	"foundrySpell": PropOrder._FOUNDRY_SPELL,
@@ -1952,6 +1981,7 @@ PropOrder._PROP_TO_LIST = {
 	"boon": PropOrder._BOON,
 	"deity": PropOrder._DEITY,
 	"feat": PropOrder._FEAT,
+	"foundryFeat": PropOrder._FOUNDRY_FEAT,
 	"vehicle": PropOrder._VEHICLE,
 	"vehicleUpgrade": PropOrder._VEHICLE_UPGRADE,
 	"item": PropOrder._ITEM,
